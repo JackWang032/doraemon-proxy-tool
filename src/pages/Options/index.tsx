@@ -8,5 +8,3 @@ render(
   <Options title={'Settings'} />,
   window.document.querySelector('#app-container')
 );
-
-if (module.hot) module.hot.accept();

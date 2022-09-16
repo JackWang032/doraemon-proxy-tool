@@ -1,15 +1,18 @@
 import React from 'react';
-import logo from '../../assets/img/logo.svg';
-import Greetings from '../../containers/Greetings/Greetings';
+import { useEffect,useState } from 'react';
 import './Popup.css';
 
 const Popup = () => {
+  const [ip, setIp] = useState<string>('');
+  chrome.storage.local.get('ip').then(res => {
+    setIp(res.ip);
+  })
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/pages/Popup/Popup.jsx</code> and save to reload.
+          你的ip: {ip}
         </p>
         <a
           className="App-link"

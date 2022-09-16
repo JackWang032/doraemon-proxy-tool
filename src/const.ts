@@ -1,0 +1,1 @@
+export const doraemonUrl = 'http://doraemon.dtstack.com:7001'

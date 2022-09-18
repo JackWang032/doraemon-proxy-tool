@@ -4,4 +4,7 @@ request('/api/github/get-local-ip').then(res => {
         const ip = res.data?.localIp || '';
         chrome.storage.local.set({ip})
     }
-})  
+})
+chrome.runtime.onInstalled.addListener(() => {
+    chrome.storage.local.set({ proxySettings: [] });
+})

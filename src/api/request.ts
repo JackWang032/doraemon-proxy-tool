@@ -1,11 +1,9 @@
 import {doraemonUrl} from '../const'
-export default function request (reqParam: RequestInfo){
-    if (typeof reqParam === 'object') {
-        (reqParam as RequestInfo)['url'] = doraemonUrl + reqParam['url'];
-    } else {
-        reqParam = doraemonUrl + reqParam
+export default function request (input: RequestInfo, init?: RequestInit | undefined){
+    if (typeof input === 'string') {
+        input = doraemonUrl + input;
     }
-    return fetch(reqParam).then(res => {
+    return fetch(input, init).then(res => {
         return res.json();
     })
 }

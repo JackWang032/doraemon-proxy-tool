@@ -8,7 +8,6 @@ interface Props {
 
 const Options: React.FC<Props> = ({ title }: Props) => {
   return <div className="OptionsContainer">{title} 
-    <Input />
   </div>;
 };
 

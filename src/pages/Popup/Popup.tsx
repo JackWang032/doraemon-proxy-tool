@@ -57,7 +57,7 @@ const Popup = () => {
         if (
             ![
                 'http://172.16.100.225:7001/page/proxy-server',
-                'http://doraemon.dtstack.com:7001/page/proxy-server',
+                'http://doraemon.dtstack.com/page/proxy-server',
             ].includes(tab.url!)
         ) {
             message.info('请先打开doraemon代理页');

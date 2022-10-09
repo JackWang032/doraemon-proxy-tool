@@ -14,7 +14,14 @@
     "resolveJsonModule": true,
     "noImplicitAny": false,
     "noEmit": false,
-    "jsx": "react"
+    "jsx": "react",
+    "paths": {
+      "@/*": ["./src/*"],
+      "Background/*": ["./src/pages/Background/*"],
+      "Content/*": ["./src/pages/Content/*"],
+      "Options/*": ["./src/pages/Options/*"],
+      "Popup/*": ["./src/pages/Popup/*"],
+  }
   },
   "include": ["src"],
   "exclude": ["build", "node_modules"]

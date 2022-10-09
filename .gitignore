@@ -17,3 +17,6 @@
 
 # secrets
 secrets.*.js
+
+yarn-error.log
+.pnpm-debug.log

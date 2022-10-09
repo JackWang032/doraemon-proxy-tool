@@ -25,3 +25,7 @@ code {
   box-sizing: border-box;
   margin: 0;
 }
+
+a {
+  text-decoration: none;
+}

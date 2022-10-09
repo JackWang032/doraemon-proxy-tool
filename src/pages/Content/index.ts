@@ -1,5 +1,5 @@
-console.log('Content script works! ' + new Date());
 import $ from 'jquery';
+console.log('Doraemon Content Script Works! ' + new Date().toLocaleString());
 
 // 获取当前展开server下的所有规则
 const getRules = async () => {
@@ -49,7 +49,8 @@ const getProxyDataFromDom = async () => {
     const serverEl = $(
         '.ant-table-expanded-row:not([style="display: none;"])'
     ).prev()?.[0];
-    if (!serverEl) return;
+    if (!serverEl) return { success: false, data: null };
+    
     const serverId = Number(serverEl.dataset.rowKey);
     const serverName = serverEl.children[2].textContent;
     const rules = await getRules();
@@ -60,14 +61,16 @@ const getProxyDataFromDom = async () => {
         rules,
     };
 
-    return serverInfo;
+    return {
+        success: true,
+        data: serverInfo
+    };
 };
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.type === 'fetchProxySetting') {
-        getProxyDataFromDom().then((proxyData) => {
-            console.log(proxyData);
-            sendResponse(proxyData);
+        getProxyDataFromDom().then((data) => {
+            sendResponse(data);
         });
 
         // 异步时需返回true避免通信端口被关闭

@@ -1,7 +1,9 @@
 {
   "name": "doraemon-proxy-tool",
   "version": "1.0.0",
-  "description": "a",
+  "author": "Jialan",
+  "description": "A chrome extension that help you to proxy",
+  "keywords": ["doraemon", "proxy", "chrome-extension", "dtstack"],
   "license": "MIT",
   "scripts": {
     "build": "node utils/build.js",

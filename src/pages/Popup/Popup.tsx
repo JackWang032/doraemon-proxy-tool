@@ -1,11 +1,12 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { ReloadOutlined } from '@ant-design/icons';
+import { ReloadOutlined, SyncOutlined } from '@ant-design/icons';
 import './Popup.scss';
-import { Card, Col, message, Row, Switch } from 'antd';
+import { Card, Col, Empty, message, Row, Switch, Tooltip } from 'antd';
 import 'antd/dist/antd.css';
 import request from '../../api/request';
 import { cloneDeep } from 'lodash';
+import { doraemonUrls } from '../../const';
 
 type TProxyServer = {
     serverId: number;
@@ -13,11 +14,11 @@ type TProxyServer = {
     rules: any[];
 };
 
-const getProxySettings = async () => {
-    const { proxySettings } = await chrome.storage.local.get({
-        proxySettings: [],
+const getproxyServers = async () => {
+    const { proxyServers } = await chrome.storage.local.get({
+        proxyServers: [],
     });
-    return proxySettings;
+    return proxyServers;
 };
 
 const Popup = () => {
@@ -26,8 +27,8 @@ const Popup = () => {
 
     // 每次打开popup都会从缓存中读取配置
     useEffect(() => {
-        chrome.storage.local.get({ proxySettings: [] }).then((res) => {
-            setProxyServers(res.proxySettings);
+        chrome.storage.local.get({ proxyServers: [] }).then((res) => {
+            setProxyServers(res.proxyServers);
         });
     }, []);
 
@@ -54,12 +55,7 @@ const Popup = () => {
         });
 
         const tab = tabs[0];
-        if (
-            ![
-                'http://172.16.100.225:7001/page/proxy-server',
-                'http://doraemon.dtstack.com/page/proxy-server',
-            ].includes(tab.url!)
-        ) {
+        if (!doraemonUrls.includes(tab.url!)) {
             message.info('请先打开doraemon代理页');
             return;
         }
@@ -67,10 +63,12 @@ const Popup = () => {
         chrome.tabs.sendMessage(
             tab.id!,
             { type: 'fetchProxySetting' },
-            async (proxyData) => {
-                if (proxyData) {
-                    const proxySettings = await getProxySettings();
-                    const oldProxyData = proxySettings.find(
+            async (responese: any) => {
+                if (!responese) return message.info('内容脚本未注入，请重新打开哆啦A梦页面')
+                const { success, data: proxyData } = responese;
+                if (success) {
+                    const proxyServers = await getproxyServers();
+                    const oldProxyData = proxyServers.find(
                         (item) => item.serverId === proxyData.serverId
                     );
                     // 已存在该代理服务则更新为最新的
@@ -78,10 +76,10 @@ const Popup = () => {
                         oldProxyData['serverName'] = proxyData['serverName'];
                         oldProxyData['rules'] = proxyData['rules'];
                     } else {
-                        proxySettings.push(proxyData);
+                        proxyServers.push(proxyData);
                     }
-                    setProxyServers(proxySettings);
-                    chrome.storage.local.set({ proxySettings });
+                    setProxyServers(proxyServers);
+                    chrome.storage.local.set({ proxyServers });
                     message.success(
                         '已更新 ' + proxyData.serverName + ' 中的规则'
                     );
@@ -117,7 +115,7 @@ const Popup = () => {
                         rule.status = checked ? 1 : 0;
                     }
                     setProxyServers(clone);
-                    chrome.storage.local.set({ proxySettings: clone });
+                    chrome.storage.local.set({ proxyServers: clone });
                 } else {
                     message.error('更新失败');
                 }
@@ -141,17 +139,37 @@ const Popup = () => {
                     );
                     server.rules = filterRules;
                     setProxyServers(clone);
-                    chrome.storage.local.set({ proxySettings: clone });
+                    chrome.storage.local.set({ proxyServers: clone });
                     message.success('刷新成功');
                 }
             }
         );
     };
 
+    // 刷新ip地址
+    const refreshIpAddress = () => {
+        request('/api/github/get-local-ip').then((res) => {
+            if (res.success) {
+                const ip = res.data?.localIp || '';
+                chrome.storage.local.set({ ip });
+                setIp(ip);
+                message.success({ content: '刷新ip成功', duration: 1 });
+            }
+        });
+    };
+
     return (
         <div className="App">
             <div className="header">
-                <p>你的ip: {ip}</p>
+                <p>
+                    你的ip: {ip}{' '}
+                    <Tooltip title="重新获取ip">
+                        <SyncOutlined
+                            style={{ cursor: 'pointer' }}
+                            onClick={refreshIpAddress}
+                        />
+                    </Tooltip>
+                </p>
                 <span className="btn-fetch" onClick={fetchProxy}>
                     抓取
                 </span>
@@ -199,8 +217,32 @@ const Popup = () => {
                                 </Col>
                             </Row>
                         ))}
+                        {!proxyServer.rules?.length && (
+                            <Empty
+                                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                description="还没有代理规则哦"
+                            >
+                                可以尝试点击右上角刷新
+                            </Empty>
+                        )}
                     </Card>
                 ))}
+                {!proxyServers?.length && (
+                    <Empty
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                        style={{ marginTop: '20%' }}
+                        description="还没有代理服务哦"
+                    >
+                        点击
+                        <a
+                            target="_blank"
+                            href="http://doraemon.dtstack.com/page/proxy-server"
+                        >
+                            此处
+                        </a>
+                        去添加
+                    </Empty>
+                )}
             </div>
         </div>
     );

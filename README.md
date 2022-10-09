@@ -2,11 +2,11 @@
 ### 源码编译
 1. 安装依赖
   ```
-  npm install
+  yarn
   ```
 2. 编译
   ```
-  npm run build
+  yarn build
   ```
 3. 浏览器加载扩展程序选择 build 文件夹
 

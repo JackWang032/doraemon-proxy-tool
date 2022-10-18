@@ -105,13 +105,17 @@ const options = {
         ],
         exclude: /node_modules/,
       },
+      {
+        test:/\.md$/,
+        loader:'raw-loader'
+      }
     ],
   },
   resolve: {
     alias: alias,
     extensions: fileExtensions
       .map((extension) => '.' + extension)
-      .concat(['.js', '.jsx', '.ts', '.tsx', '.css']),
+      .concat(['.js', '.jsx', '.ts', '.tsx', '.css', '.md']),
   },
   plugins: [
     new CleanWebpackPlugin({ verbose: false }),

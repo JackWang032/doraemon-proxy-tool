@@ -1,36 +1,48 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { ReloadOutlined, SyncOutlined } from '@ant-design/icons';
+import {
+    ReloadOutlined,
+    SettingOutlined,
+    SyncOutlined,
+} from '@ant-design/icons';
 import './Popup.scss';
-import { Card, Col, Empty, message, Row, Switch, Tooltip } from 'antd';
-import 'antd/dist/antd.css';
-import request from '../../api/request';
+import { Button, Card, Col, Empty, message, Row, Switch, Tooltip } from 'antd';
+import request from '@/api/request';
 import { cloneDeep } from 'lodash';
-import { doraemonUrls } from '../../const';
+import { doraemonUrls } from '@/const';
 
-type TProxyServer = {
-    serverId: number;
-    serverName: string;
-    rules: any[];
-};
-
-const getproxyServers = async () => {
+const getProxyServers = async () => {
     const { proxyServers } = await chrome.storage.local.get({
         proxyServers: [],
     });
     return proxyServers;
 };
 
+const POPUP_SIZE = {
+    small: [320, 380],
+    default: [416, 494],
+    large: [512, 608],
+};
+
 const Popup = () => {
     const [ip, setIp] = useState<string>('');
     const [proxyServers, setProxyServers] = useState<TProxyServer[]>([]);
+    const [config, setConfig] = useState<any>({});
 
     // 每次打开popup都会从缓存中读取配置
     useEffect(() => {
-        chrome.storage.local.get({ proxyServers: [] }).then((res) => {
-            setProxyServers(res.proxyServers);
-        });
+        chrome.storage.local
+            .get({ proxyServers: [], ip: '', config: {} })
+            .then((res) => {
+                setProxyServers(res.proxyServers);
+                setIp(res.ip);
+                setConfig(res.config);
+            });
     }, []);
+
+    useEffect(() => {
+        document.body.className = config.theme === 'dark' ? 'dark' : ''
+    }, [config])
 
     // 代理规则变更时计算当前开启的规则数量并展示在badge中
     useEffect(() => {
@@ -42,10 +54,6 @@ const Popup = () => {
         });
         chrome.action.setBadgeText({ text: '' + ruleOpenCount });
     }, [proxyServers]);
-
-    chrome.storage.local.get('ip').then((res) => {
-        setIp(res.ip);
-    });
 
     // 通知内容脚本抓取代理页面数据
     const fetchProxy = async () => {
@@ -63,11 +71,14 @@ const Popup = () => {
         chrome.tabs.sendMessage(
             tab.id!,
             { type: 'fetchProxySetting' },
-            async (responese: any) => {
-                if (!responese) return message.info('内容脚本未注入，请重新打开哆啦A梦页面')
+            async (responese: TProxyDataResponse) => {
+                if (!responese)
+                    return message.info(
+                        '内容脚本未注入，请重新打开哆啦A梦页面'
+                    );
                 const { success, data: proxyData } = responese;
-                if (success) {
-                    const proxyServers = await getproxyServers();
+                if (success && proxyData) {
+                    const proxyServers = await getProxyServers();
                     const oldProxyData = proxyServers.find(
                         (item) => item.serverId === proxyData.serverId
                     );
@@ -84,7 +95,9 @@ const Popup = () => {
                         '已更新 ' + proxyData.serverName + ' 中的规则'
                     );
                 } else {
-                    message.info('未抓取到有效数据');
+                    message.info(
+                        '未抓取到有效数据, 查看是否已展开表格中的代理服务'
+                    );
                 }
             }
         );
@@ -158,8 +171,58 @@ const Popup = () => {
         });
     };
 
+    // 打开配置页
+    const openOptionPage = () => {
+        chrome.runtime.openOptionsPage();
+    };
+
+    const getSize = () => {
+        if (config.size === 'auto') {
+            return {
+                width: 416,
+                minHeight: 300,
+                maxHeight: 494,
+            };
+        }
+        const [width, height] = POPUP_SIZE[config.size || 'default'];
+        return {
+            width,
+            height,
+        };
+    };
+
+    // 规则ip与当前ip不一致时，更新为当前ip
+    const updateRuleIp = (rule: any, serverId: number) => {
+        const params = {
+            ip: ip,
+            id: rule.id,
+            target: rule.target,
+        };
+        request('/api/proxy-server/update-rule', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json;charset=UTF-8' },
+            body: JSON.stringify(params),
+        }).then((res) => {
+            if (res?.success?.[0] === 1) {
+                const cloneServers: TProxyServer[] = cloneDeep(proxyServers);
+                const server = cloneServers.find(
+                    (server) => server.serverId === serverId
+                );
+                const _rule = server?.rules.find(
+                    (item) => item.id === rule.id
+                )!;
+                _rule.ip = ip;
+                setProxyServers(cloneServers);
+                chrome.storage.local.set({ proxyServers: cloneServers });
+                message.success('更新成功');
+            } else {
+                message.success('更新失败');
+            }
+        });
+    };
+
     return (
-        <div className="App">
+        <div className="container" style={getSize()}>
             <div className="header">
                 <p>
                     你的ip: {ip}{' '}
@@ -170,14 +233,21 @@ const Popup = () => {
                         />
                     </Tooltip>
                 </p>
-                <span className="btn-fetch" onClick={fetchProxy}>
-                    抓取
-                </span>
+                <p>
+                    <SettingOutlined
+                        style={{ marginRight: 12, cursor: 'pointer' }}
+                        onClick={openOptionPage}
+                    />
+                    <span className="btn-fetch" onClick={fetchProxy}>
+                        抓取
+                    </span>
+                </p>
             </div>
             <div className="content">
                 {proxyServers.map((proxyServer) => (
                     <Card
                         key={proxyServer.serverId}
+                        className='card-server'
                         title={
                             <div className="server-title">
                                 <span>{proxyServer.serverName}</span>
@@ -189,7 +259,6 @@ const Popup = () => {
                             </div>
                         }
                         bordered={false}
-                        style={{ marginBottom: 18 }}
                         headStyle={{
                             height: 38,
                             minHeight: 38,
@@ -199,11 +268,25 @@ const Popup = () => {
                         {proxyServer.rules.map((rule) => (
                             <Row
                                 key={rule.id}
+                                className='row-rule-item'
                                 justify="space-between"
-                                style={{ marginBottom: 10 }}
+                                align="middle"   
                             >
                                 <Col>{rule.remark}</Col>
                                 <Col>
+                                    {rule.ip !== ip && (
+                                        <Button
+                                            type="link"
+                                            onClick={() =>
+                                                updateRuleIp(
+                                                    rule,
+                                                    proxyServer.serverId
+                                                )
+                                            }
+                                        >
+                                            ip不一致,点击更新
+                                        </Button>
+                                    )}
                                     <Switch
                                         checked={rule.status === 1}
                                         onChange={(checked) => {

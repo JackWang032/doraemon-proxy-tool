@@ -1,0 +1,32 @@
+@use 'sass:meta';
+
+body:not(.dark) {
+    @include meta.load-css('node_modules/antd/dist/antd.css', $with: null);
+}
+
+body.dark {
+    @include meta.load-css('node_modules/antd/dist/antd.dark.css', $with: null);
+    background-color: #000;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+}
+
+.container {
+    height: 100%;
+    padding: 16px;
+}
+
+.title {
+    font-size: 32px;
+}

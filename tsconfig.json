@@ -1,28 +1,32 @@
 {
-  "compilerOptions": {
-    "target": "es2015",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": false,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "noImplicitAny": false,
-    "noEmit": false,
-    "jsx": "react",
-    "paths": {
-      "@/*": ["./src/*"],
-      "Background/*": ["./src/pages/Background/*"],
-      "Content/*": ["./src/pages/Content/*"],
-      "Options/*": ["./src/pages/Options/*"],
-      "Popup/*": ["./src/pages/Popup/*"],
-  }
-  },
-  "include": ["src"],
-  "exclude": ["build", "node_modules"]
+    "compilerOptions": {
+        "target": "es2015",
+        "lib": ["dom", "dom.iterable", "esnext"],
+        "allowJs": false,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "noImplicitAny": false,
+        "noEmit": false,
+        "jsx": "react",
+        "paths": {
+            "@/*": ["./src/*"],
+            "Background/*": ["./src/pages/Background/*"],
+            "Content/*": ["./src/pages/Content/*"],
+            "Options/*": ["./src/pages/Options/*"],
+            "Popup/*": ["./src/pages/Popup/*"]
+        },
+        "typeRoots": [
+            "./src/typings",
+            "./node_modules/@types"
+        ]
+    },
+    "include": ["src/**/*"],
+    "exclude": ["build", "node_modules"]
 }

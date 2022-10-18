@@ -52,12 +52,14 @@ const getProxyDataFromDom = async () => {
     if (!serverEl) return { success: false, data: null };
     
     const serverId = Number(serverEl.dataset.rowKey);
-    const serverName = serverEl.children[2].textContent;
+    const serverName = serverEl.children[2].textContent!;
+    const serverAddress = serverEl.children[3].querySelector('.ant-typography')?.childNodes[0].textContent || '';
     const rules = await getRules();
 
-    const serverInfo = {
+    const serverInfo: TProxyServer = {
         serverId,
         serverName,
+        serverAddress,
         rules,
     };
 
@@ -69,7 +71,7 @@ const getProxyDataFromDom = async () => {
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.type === 'fetchProxySetting') {
-        getProxyDataFromDom().then((data) => {
+        getProxyDataFromDom().then((data: TProxyDataResponse) => {
             sendResponse(data);
         });
 
@@ -77,3 +79,4 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         return true;
     }
 });
+

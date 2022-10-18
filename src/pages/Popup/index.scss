@@ -1,0 +1,48 @@
+@use 'sass:meta';
+
+body:not(.dark) {
+    @include meta.load-css('node_modules/antd/dist/antd.css', $with: null);
+
+    .content {
+        background-color: aliceblue;
+        color: #282c34;
+    }
+}
+
+body.dark {
+    @include meta.load-css('node_modules/antd/dist/antd.dark.css', $with: null);
+    .header {
+        background-color: #000;
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    .content {
+        background-color: rgb(32, 32, 37);
+        color: #fff
+    }
+}
+
+html,
+body {
+    height: auto !important;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    position: relative;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+}

@@ -14,8 +14,9 @@ import {
 } from 'antd';
 import { Link } from 'react-router-dom';
 import IconToolTip from './IconToolTip';
-import { DeleteTwoTone } from '@ant-design/icons';
+import { DeleteTwoTone, DownSquareTwoTone, UpSquareTwoTone } from '@ant-design/icons';
 import { useForm } from 'antd/es/form/Form';
+import { cloneDeep } from 'lodash';
 import './Options.scss';
 
 interface IProps {}
@@ -77,6 +78,26 @@ const Options: React.FC<IProps> = () => {
         setConfig(newConfig);
         chrome.storage.local.set({ config: newConfig });
     };
+
+    const moveUp = (serverId: Number) => {
+        const index = servers.findIndex(server => server.serverId === serverId);
+        if (index > 0) {
+            const newServers = cloneDeep(servers);
+            newServers.splice(index - 1, 2, newServers[index], newServers[index - 1])
+            setServers(newServers);
+            chrome.storage.local.set({ proxyServers: newServers });
+        }
+    }
+
+    const moveDown = (serverId: Number) => {
+        const index = servers.findIndex(server => server.serverId === serverId);
+        if (index < servers.length - 1) {
+            const newServers = cloneDeep(servers);
+            newServers.splice(index, 2, newServers[index + 1], newServers[index])
+            setServers(newServers);
+            chrome.storage.local.set({ proxyServers: newServers });
+        }
+    }
 
     return (
         <div className="container">
@@ -166,12 +187,27 @@ const Options: React.FC<IProps> = () => {
                                     }
                                     key={server.serverId}
                                     extra={
-                                        <DeleteTwoTone
-                                            onClick={(e) => {
-                                                deleteProxyServer(server);
-                                                e.stopPropagation();
-                                            }}
-                                        />
+                                        <div
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <UpSquareTwoTone
+                                                style={{marginRight: 8}}
+                                                onClick={() =>
+                                                    moveUp(server.serverId)
+                                                }
+                                            />
+                                            <DownSquareTwoTone
+                                                style={{marginRight: 16}}
+                                                onClick={() =>
+                                                    moveDown(server.serverId)
+                                                }
+                                            />
+                                            <DeleteTwoTone
+                                                onClick={() =>
+                                                    deleteProxyServer(server)
+                                                }
+                                            />
+                                        </div>
                                     }
                                 >
                                     <List

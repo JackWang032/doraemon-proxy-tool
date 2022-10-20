@@ -150,7 +150,7 @@ const Popup = () => {
                     const server = clone.find(
                         (server) => server.serverId === serverId
                     );
-                    server.rules = filterRules;
+                    if (server) server.rules = filterRules;
                     setProxyServers(clone);
                     chrome.storage.local.set({ proxyServers: clone });
                     message.success('刷新成功');

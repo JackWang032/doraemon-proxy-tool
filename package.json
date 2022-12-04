@@ -1,6 +1,6 @@
 {
   "name": "doraemon-proxy-tool",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "author": "Jialan",
   "description": "A chrome extension that help you to proxy quickly",
   "repository": "https://github.com/JackWang032/doraemon-proxy-tool",
@@ -21,15 +21,11 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@hot-loader/react-dom": "^17.0.2",
-    "@types/jquery": "^3.5.14",
     "antd": "^4.23.1",
-    "jquery": "^3.6.1",
     "lodash": "^4.17.21",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-hot-loader": "^4.13.0",
-    "react-markdown": "^8.0.3",
-    "react-router-dom": "^6.4.2"
+    "react-hot-loader": "^4.13.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.0",
@@ -53,12 +49,10 @@
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
-    "file-loader": "^6.2.0",
     "fs-extra": "^10.0.0",
     "html-loader": "^3.1.0",
     "html-webpack-plugin": "^5.5.0",
     "prettier": "^2.5.1",
-    "raw-loader": "^4.0.2",
     "sass": "^1.55.0",
     "sass-loader": "^12.4.0",
     "source-map-loader": "^3.0.1",

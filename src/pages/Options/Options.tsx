@@ -12,7 +12,6 @@ import {
     Radio,
     Row,
 } from 'antd';
-import { Link } from 'react-router-dom';
 import IconToolTip from './IconToolTip';
 import { DeleteTwoTone, DownSquareTwoTone, UpSquareTwoTone } from '@ant-design/icons';
 import { useForm } from 'antd/es/form/Form';
@@ -43,7 +42,12 @@ const Options: React.FC<IProps> = () => {
     }, []);
 
     useEffect(() => {
-        document.body.className = config?.theme === 'dark' ? 'dark' : '';
+        if (!config) return
+        if (config.theme !== 'auto') {
+            document.body.className = config.theme;
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.body.className = 'dark';
+        }
     }, [config]);
 
     const deleteProxyServer = (server: TProxyServer) => {
@@ -103,7 +107,6 @@ const Options: React.FC<IProps> = () => {
         <div className="container">
             <header>
                 <div className="title">系统设置</div>
-                <Link to={'/document'}>使用帮助</Link>
             </header>
 
             <Divider />
@@ -166,6 +169,7 @@ const Options: React.FC<IProps> = () => {
                             <Radio.Group>
                                 <Radio value="dark">暗色</Radio>
                                 <Radio value="light">亮色</Radio>
+                                <Radio value="auto">自适应</Radio>
                             </Radio.Group>
                         </Form.Item>
                     </div>

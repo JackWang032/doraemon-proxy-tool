@@ -9,10 +9,3 @@ type TProxyDataResponse = {
     success: boolean;
     data: TProxyServer | null
 }
-
-declare module "*.md" {
-    const content: string;
-
-    export default content;
-
-}

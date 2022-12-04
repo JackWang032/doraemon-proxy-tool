@@ -40,6 +40,21 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            >span {
+                flex: 1;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+        }
+
+        .server-title-actions {
+            flex-shrink: 0;
+            >span {
+                margin-right: 8px;
+                &:last-child {
+                    margin-right: 0;
+                }
+            }
         }
 
         .row-rule-item {

@@ -1,22 +1,15 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import {
-    ReloadOutlined,
+    EnterOutlined,
     SettingOutlined,
     SyncOutlined,
 } from '@ant-design/icons';
 import './Popup.scss';
-import { Button, Card, Col, Empty, message, Row, Switch, Tooltip } from 'antd';
-import request from '@/api/request';
+import { Card, Col, Empty, message, Row, Switch, Tooltip } from 'antd';
 import { cloneDeep } from 'lodash';
 import { doraemonUrls } from '@/const';
-
-const getProxyServers = async () => {
-    const { proxyServers } = await chrome.storage.local.get({
-        proxyServers: [],
-    });
-    return proxyServers;
-};
+import api from '@/api';
 
 const POPUP_SIZE = {
     small: [320, 380],
@@ -38,11 +31,17 @@ const Popup = () => {
                 setIp(res.ip);
                 setConfig(res.config);
             });
+        getProxyServers();
     }, []);
 
     useEffect(() => {
-        document.body.className = config.theme === 'dark' ? 'dark' : ''
-    }, [config])
+        if (!config) return;
+        if (config.theme !== 'auto') {
+            document.body.className = config.theme;
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.body.className = 'dark';
+        }
+    }, [config]);
 
     // 代理规则变更时计算当前开启的规则数量并展示在badge中
     useEffect(() => {
@@ -55,52 +54,15 @@ const Popup = () => {
         chrome.action.setBadgeText({ text: '' + ruleOpenCount });
     }, [proxyServers]);
 
-    // 通知内容脚本抓取代理页面数据
-    const fetchProxy = async () => {
-        const tabs = await chrome.tabs.query({
-            active: true,
-            currentWindow: true,
-        });
-
-        const tab = tabs[0];
-        if (!doraemonUrls.includes(tab.url!)) {
-            message.info('请先打开doraemon代理页');
-            return;
+    const getProxyServers = async () => {
+        const { ip } = await chrome.storage.local.get('ip');
+        const res = await api.getProxyServers({ userIP: ip });
+        if (res.success) {
+            const serverList = res.data || [];
+            await chrome.storage.local.set({
+                proxyServers: serverList,
+            });
         }
-
-        chrome.tabs.sendMessage(
-            tab.id!,
-            { type: 'fetchProxySetting' },
-            async (responese: TProxyDataResponse) => {
-                if (!responese)
-                    return message.info(
-                        '内容脚本未注入，请重新打开哆啦A梦页面'
-                    );
-                const { success, data: proxyData } = responese;
-                if (success && proxyData) {
-                    const proxyServers = await getProxyServers();
-                    const oldProxyData = proxyServers.find(
-                        (item) => item.serverId === proxyData.serverId
-                    );
-                    // 已存在该代理服务则更新为最新的
-                    if (oldProxyData) {
-                        oldProxyData['serverName'] = proxyData['serverName'];
-                        oldProxyData['rules'] = proxyData['rules'];
-                    } else {
-                        proxyServers.push(proxyData);
-                    }
-                    setProxyServers(proxyServers);
-                    chrome.storage.local.set({ proxyServers });
-                    message.success(
-                        '已更新 ' + proxyData.serverName + ' 中的规则'
-                    );
-                } else {
-                    message.info(
-                        '未抓取到有效数据, 查看是否已展开表格中的代理服务'
-                    );
-                }
-            }
-        );
     };
 
     // 更新规则启用状态
@@ -110,11 +72,7 @@ const Popup = () => {
         checked: boolean
     ) => {
         if (!ruleId) return;
-        request('/api/proxy-server/update-rule-status', {
-            method: 'POST',
-            headers: { 'content-type': 'application/json;charset=UTF-8' },
-            body: JSON.stringify({ id: ruleId, status: checked ? 1 : 0 }),
-        })
+        api.updateRuleStatus({ id: ruleId, status: checked ? 1 : 0 })
             .then(async (res) => {
                 if (res.success?.[0] === 1) {
                     message.success('更新成功');
@@ -138,30 +96,9 @@ const Popup = () => {
             });
     };
 
-    // 直接从请求接口来刷新规则列表
-    const refreshServer = (serverId: number) => {
-        request(`/api/proxy-server/rule-list?proxy_server_id=${serverId}`).then(
-            (res) => {
-                if (res.success) {
-                    const rules = res.data?.data || [];
-                    // 只保留自己的规则
-                    const filterRules = rules.filter((rule) => rule.ip === ip);
-                    const clone = cloneDeep(proxyServers);
-                    const server = clone.find(
-                        (server) => server.serverId === serverId
-                    );
-                    if (server) server.rules = filterRules;
-                    setProxyServers(clone);
-                    chrome.storage.local.set({ proxyServers: clone });
-                    message.success('刷新成功');
-                }
-            }
-        );
-    };
-
     // 刷新ip地址
     const refreshIpAddress = () => {
-        request('/api/github/get-local-ip').then((res) => {
+        api.getLocalIp().then((res) => {
             if (res.success) {
                 const ip = res.data?.localIp || '';
                 chrome.storage.local.set({ ip });
@@ -191,34 +128,19 @@ const Popup = () => {
         };
     };
 
-    // 规则ip与当前ip不一致时，更新为当前ip
-    const updateRuleIp = (rule: any, serverId: number) => {
-        const params = {
-            ip: ip,
-            id: rule.id,
-            target: rule.target,
-        };
-        request('/api/proxy-server/update-rule', {
-            method: 'POST',
-            headers: { 'content-type': 'application/json;charset=UTF-8' },
-            body: JSON.stringify(params),
-        }).then((res) => {
-            if (res?.success?.[0] === 1) {
-                const cloneServers: TProxyServer[] = cloneDeep(proxyServers);
-                const server = cloneServers.find(
-                    (server) => server.serverId === serverId
-                );
-                const _rule = server?.rules.find(
-                    (item) => item.id === rule.id
-                )!;
-                _rule.ip = ip;
-                setProxyServers(cloneServers);
-                chrome.storage.local.set({ proxyServers: cloneServers });
-                message.success('更新成功');
-            } else {
-                message.success('更新失败');
-            }
-        });
+    // 跳转至指定项目
+    const jumpToProject = (serverId: number) => {
+        chrome.tabs
+            .query({ active: true, currentWindow: true })
+            .then((tabs) => {
+                const tab = tabs[0];
+                const index = (tab?.index || 0) + 1;
+                chrome.tabs.create({
+                    url: `${doraemonUrls[0]}?projectId=${serverId}`,
+                    active: true,
+                    index: index,
+                });
+            });
     };
 
     return (
@@ -238,24 +160,29 @@ const Popup = () => {
                         style={{ marginRight: 12, cursor: 'pointer' }}
                         onClick={openOptionPage}
                     />
-                    <span className="btn-fetch" onClick={fetchProxy}>
-                        抓取
-                    </span>
                 </p>
             </div>
             <div className="content">
                 {proxyServers.map((proxyServer) => (
                     <Card
                         key={proxyServer.serverId}
-                        className='card-server'
+                        className="card-server"
                         title={
                             <div className="server-title">
-                                <span>{proxyServer.serverName}</span>
-                                <ReloadOutlined
-                                    onClick={() =>
-                                        refreshServer(proxyServer.serverId)
-                                    }
-                                />
+                                <span title={proxyServer.serverName}>
+                                    {proxyServer.serverName}
+                                </span>
+                                <div className="server-title-actions">
+                                    <Tooltip title="快速跳转至该项目">
+                                        <EnterOutlined
+                                            onClick={() =>
+                                                jumpToProject(
+                                                    proxyServer.serverId
+                                                )
+                                            }
+                                        />
+                                    </Tooltip>
+                                </div>
                             </div>
                         }
                         bordered={false}
@@ -268,25 +195,12 @@ const Popup = () => {
                         {proxyServer.rules.map((rule) => (
                             <Row
                                 key={rule.id}
-                                className='row-rule-item'
+                                className="row-rule-item"
                                 justify="space-between"
-                                align="middle"   
+                                align="middle"
                             >
-                                <Col>{rule.remark}</Col>
+                                <Col>{rule.remark || '此规则无备注信息'}</Col>
                                 <Col>
-                                    {rule.ip !== ip && (
-                                        <Button
-                                            type="link"
-                                            onClick={() =>
-                                                updateRuleIp(
-                                                    rule,
-                                                    proxyServer.serverId
-                                                )
-                                            }
-                                        >
-                                            ip不一致,点击更新
-                                        </Button>
-                                    )}
                                     <Switch
                                         checked={rule.status === 1}
                                         onChange={(checked) => {

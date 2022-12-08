@@ -39,8 +39,9 @@ chrome.runtime.onInstalled.addListener(async () => {
 // 每次浏览器启动时
 chrome.runtime.onStartup.addListener(async () => {
     let ruleOpenCount = 0;
-    const { proxyServers } = await chrome.storage.local.get({
+    const { proxyServers, config } = await chrome.storage.local.get({
         proxyServers: [],
+        config: {}
     });
     proxyServers.forEach((server) => {
         server.rules.forEach((rule) => {
@@ -48,5 +49,5 @@ chrome.runtime.onStartup.addListener(async () => {
         });
     });
     chrome.action.setBadgeText({ text: '' + ruleOpenCount });
-    getLocalIp()
+    config.ipGetMode !== 'fixed' && getLocalIp()
 });

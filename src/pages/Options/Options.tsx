@@ -1,21 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Badge,
-    Col,
     Collapse,
     Divider,
-    Empty,
     Form,
     Input,
-    List,
-    Modal,
     Radio,
-    Row,
 } from 'antd';
 import IconToolTip from './IconToolTip';
-import { DeleteTwoTone, DownSquareTwoTone, UpSquareTwoTone } from '@ant-design/icons';
 import { useForm } from 'antd/es/form/Form';
-import { cloneDeep } from 'lodash';
+import { isEmpty } from 'lodash';
 import './Options.scss';
 
 interface IProps {}
@@ -26,43 +19,27 @@ const formItemLayout = {
 const Panel = Collapse.Panel;
 
 const Options: React.FC<IProps> = () => {
-    const [servers, setServers] = useState<TProxyServer[]>([]);
     const [ip, setIp] = useState<string>('');
     const [config, setConfig] = useState<any>();
     const [form] = useForm();
 
     useEffect(() => {
         chrome.storage.local
-            .get({ proxyServers: [], ip: '', config: {} })
+            .get({ ip: '', config: {} })
             .then((res) => {
-                setServers(res.proxyServers);
                 setIp(res.ip);
                 setConfig(res.config);
             });
     }, []);
 
     useEffect(() => {
-        if (!config) return
+        if (isEmpty(config)) return
         if (config.theme !== 'auto') {
             document.body.className = config.theme;
         } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
             document.body.className = 'dark';
         }
     }, [config]);
-
-    const deleteProxyServer = (server: TProxyServer) => {
-        Modal.confirm({
-            title: '提示',
-            content: `确认删除代理服务 "${server.serverName}"? 删除后可以重新抓取`,
-            onOk: () => {
-                const newServers = servers.filter(
-                    (item) => item.serverId !== server.serverId
-                );
-                setServers(newServers);
-                chrome.storage.local.set({ proxyServers: newServers });
-            },
-        });
-    };
 
     const handleFormChange = (changedValues: any) => {
         if (changedValues.ip) {
@@ -82,26 +59,6 @@ const Options: React.FC<IProps> = () => {
         setConfig(newConfig);
         chrome.storage.local.set({ config: newConfig });
     };
-
-    const moveUp = (serverId: Number) => {
-        const index = servers.findIndex(server => server.serverId === serverId);
-        if (index > 0) {
-            const newServers = cloneDeep(servers);
-            newServers.splice(index - 1, 2, newServers[index], newServers[index - 1])
-            setServers(newServers);
-            chrome.storage.local.set({ proxyServers: newServers });
-        }
-    }
-
-    const moveDown = (serverId: Number) => {
-        const index = servers.findIndex(server => server.serverId === serverId);
-        if (index < servers.length - 1) {
-            const newServers = cloneDeep(servers);
-            newServers.splice(index, 2, newServers[index + 1], newServers[index])
-            setServers(newServers);
-            chrome.storage.local.set({ proxyServers: newServers });
-        }
-    }
 
     return (
         <div className="container">
@@ -172,101 +129,6 @@ const Options: React.FC<IProps> = () => {
                                 <Radio value="auto">自适应</Radio>
                             </Radio.Group>
                         </Form.Item>
-                    </div>
-                    <div className="option-item">
-                        <div className="option-title">代理服务配置</div>
-                        <Collapse expandIconPosition="end">
-                            {servers.map((server) => (
-                                <Panel
-                                    header={
-                                        <>
-                                            <span className="server-name">
-                                                {server.serverName}
-                                            </span>
-                                            <span className="server-address">
-                                                代理服务地址
-                                                {server.serverAddress}
-                                            </span>
-                                        </>
-                                    }
-                                    key={server.serverId}
-                                    extra={
-                                        <div
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            <UpSquareTwoTone
-                                                style={{marginRight: 8}}
-                                                onClick={() =>
-                                                    moveUp(server.serverId)
-                                                }
-                                            />
-                                            <DownSquareTwoTone
-                                                style={{marginRight: 16}}
-                                                onClick={() =>
-                                                    moveDown(server.serverId)
-                                                }
-                                            />
-                                            <DeleteTwoTone
-                                                onClick={() =>
-                                                    deleteProxyServer(server)
-                                                }
-                                            />
-                                        </div>
-                                    }
-                                >
-                                    <List
-                                        header={
-                                            <Row style={{ width: '100%' }}>
-                                                <Col span={8}>规则</Col>
-                                                <Col span={12}>代理目标</Col>
-                                                <Col span={4}>启用状态</Col>
-                                            </Row>
-                                        }
-                                        bordered
-                                        rowKey="id"
-                                        dataSource={server.rules}
-                                        renderItem={(item) => (
-                                            <List.Item>
-                                                <Row style={{ width: '100%' }}>
-                                                    <Col span={8}>
-                                                        {item.remark}
-                                                    </Col>
-                                                    <Col span={12}>
-                                                        {item.target}
-                                                    </Col>
-                                                    <Col span={4}>
-                                                        {item.status === 1 ? (
-                                                            <Badge status="success" />
-                                                        ) : (
-                                                            <Badge status="error" />
-                                                        )}
-                                                    </Col>
-                                                </Row>
-                                            </List.Item>
-                                        )}
-                                    />
-                                </Panel>
-                            ))}
-                        </Collapse>
-                        {!servers.length && (
-                            <Empty
-                                style={{
-                                    padding: '24px 0',
-                                }}
-                                description={
-                                    <span>
-                                        未添加代理服务，点击
-                                        <a
-                                            href="http://doraemon.dtstack.com/page/proxy-server"
-                                            target="_blink"
-                                        >
-                                            此处
-                                        </a>
-                                        去添加
-                                    </span>
-                                }
-                            ></Empty>
-                        )}
                     </div>
                 </Form>
             )}

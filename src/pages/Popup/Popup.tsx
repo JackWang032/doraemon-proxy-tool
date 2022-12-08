@@ -7,7 +7,7 @@ import {
 } from '@ant-design/icons';
 import './Popup.scss';
 import { Card, Col, Empty, message, Row, Switch, Tooltip } from 'antd';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEmpty } from 'lodash';
 import { doraemonUrls } from '@/const';
 import api from '@/api';
 
@@ -22,7 +22,7 @@ const Popup = () => {
     const [proxyServers, setProxyServers] = useState<TProxyServer[]>([]);
     const [config, setConfig] = useState<any>({});
 
-    // 每次打开popup都会从缓存中读取配置
+    // 每次打开popup先使用缓存渲染，再请求最新数据
     useEffect(() => {
         chrome.storage.local
             .get({ proxyServers: [], ip: '', config: {} })
@@ -35,7 +35,7 @@ const Popup = () => {
     }, []);
 
     useEffect(() => {
-        if (!config) return;
+        if (isEmpty(config)) return;
         if (config.theme !== 'auto') {
             document.body.className = config.theme;
         } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -56,12 +56,17 @@ const Popup = () => {
 
     const getProxyServers = async () => {
         const { ip } = await chrome.storage.local.get('ip');
-        const res = await api.getProxyServers({ userIP: ip });
-        if (res.success) {
-            const serverList = res.data || [];
-            await chrome.storage.local.set({
-                proxyServers: serverList,
-            });
+        try {
+            const res = await api.getProxyServers({ userIP: ip });
+            if (res.success) {
+                const serverList = res.data || [];
+                await chrome.storage.local.set({
+                    proxyServers: serverList,
+                });
+                setProxyServers(serverList);
+            }
+        } catch (error) {
+            message.error('获取最新数据失败 ' + error);
         }
     };
 
@@ -97,15 +102,17 @@ const Popup = () => {
     };
 
     // 刷新ip地址
-    const refreshIpAddress = () => {
-        api.getLocalIp().then((res) => {
-            if (res.success) {
-                const ip = res.data?.localIp || '';
-                chrome.storage.local.set({ ip });
-                setIp(ip);
-                message.success({ content: '刷新ip成功', duration: 1 });
+    const refreshIpAddress = async () => {
+        const res = await api.getLocalIp();
+        if (res.success) {
+            const newIp = res.data?.localIp || '';
+            if (newIp !== ip) {
+                await chrome.storage.local.set({ ip: newIp });
+                setIp(newIp);
+                getProxyServers();
             }
-        });
+            message.success({ content: '刷新ip成功', duration: 1 });
+        }
     };
 
     // 打开配置页

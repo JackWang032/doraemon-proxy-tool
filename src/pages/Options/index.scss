@@ -4,12 +4,14 @@ body:not(.dark) {
     @include meta.load-css('node_modules/antd/dist/antd.css', $with: null);
     background-color: #fff;
     color: rgba(0, 0, 0, 0.85);
+    font-size: 14px;
 }
 
 body.dark {
     @include meta.load-css('node_modules/antd/dist/antd.dark.css', $with: null);
     background-color: #000;
     color: rgba(255, 255, 255, 0.85);
+    font-size: 14px;
 }
 
 * {

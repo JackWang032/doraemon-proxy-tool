@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Collapse,
     Divider,
     Form,
     Input,
@@ -16,7 +15,6 @@ const formItemLayout = {
     labelCol: { span: 4 },
     wrapperCol: { span: 20 },
 };
-const Panel = Collapse.Panel;
 
 const Options: React.FC<IProps> = () => {
     const [ip, setIp] = useState<string>('');

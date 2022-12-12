@@ -43,15 +43,6 @@ const Popup = () => {
             });
     }, []);
 
-    useEffect(() => {
-        if (isEmpty(config)) return;
-        if (config.theme !== 'auto') {
-            document.body.className = config.theme;
-        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.body.className = 'dark';
-        }
-    }, [config]);
-
     // 代理规则变更时计算当前开启的规则数量并展示在badge中
     useEffect(() => {
         if (isEmpty(config)) return;
@@ -170,6 +161,7 @@ const Popup = () => {
                 });
             });
     };
+    if (isEmpty(config))return null
 
     return (
         <div className="container" style={getSize()}>
@@ -228,8 +220,8 @@ const Popup = () => {
                                 justify="space-between"
                                 align="middle"
                             >
-                                <Col>{rule.remark || '此规则无备注信息'}</Col>
-                                <Col>
+                                <Col className='rule-remark' title={rule.remark}>{rule.remark || '此规则无备注信息'}</Col>
+                                <Col className='rule-actions'>
                                     <Switch
                                         checked={rule.status === 1}
                                         onChange={(checked) => {

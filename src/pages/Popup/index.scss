@@ -2,7 +2,7 @@
 
 body:not(.dark) {
     @include meta.load-css('node_modules/antd/dist/antd.css', $with: null);
-
+    font-size: 14px;
     .content {
         background-color: aliceblue;
         color: #282c34;
@@ -11,6 +11,7 @@ body:not(.dark) {
 
 body.dark {
     @include meta.load-css('node_modules/antd/dist/antd.dark.css', $with: null);
+    font-size: 14px;
     .header {
         background-color: #000;
         color: rgba(255, 255, 255, 0.85);

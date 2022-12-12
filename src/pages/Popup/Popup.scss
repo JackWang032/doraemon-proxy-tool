@@ -74,6 +74,15 @@
             &:last-child {
                 margin-bottom: 0;
             }
+            .rule-remark {
+                flex: 1;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+            .rule-actions {
+                flex-shrink: 0;
+            }
         }
     }
 }

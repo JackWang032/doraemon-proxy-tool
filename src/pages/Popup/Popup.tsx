@@ -13,7 +13,7 @@ import api from '@/api';
 
 message.config({
   top: 30,
-  duration: 1,
+  duration: 2,
   maxCount: 3,
   rtl: true,
 });
@@ -37,7 +37,8 @@ const Popup = () => {
                 setProxyServers(res.proxyServers);
                 setIp(res.ip);
                 setConfig(res.config);
-                config.ipGetMode !== 'fixed' && getLocalIp().then(getProxyServers);
+                const isAutoIp = res.config.ipGetMode !== 'fixed';
+                isAutoIp ? getLocalIp().then(getProxyServers) : getProxyServers()
             });
     }, []);
 
@@ -119,10 +120,14 @@ const Popup = () => {
 
     // 刷新ip地址
     const refreshIpAddress = () => {
-        getLocalIp().then(() => {
-            message.success('刷新ip成功');
-            getProxyServers()
-        })
+        if (config.ipGetMode !== 'fixed') {
+            getLocalIp().then(() => {
+                message.success('刷新ip成功');
+                getProxyServers();
+            });
+        } else {
+            getProxyServers();
+        }
     };
 
     // 打开配置页
@@ -165,7 +170,7 @@ const Popup = () => {
             <div className="header">
                 <p>
                     你的ip: {ip}{' '}
-                    <Tooltip title="重新获取ip">
+                    <Tooltip title="刷新ip并获取最新数据">
                         <SyncOutlined
                             style={{ cursor: 'pointer' }}
                             onClick={refreshIpAddress}

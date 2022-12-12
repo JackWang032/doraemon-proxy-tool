@@ -18,6 +18,18 @@
         .btn-fetch {
             cursor: pointer;
         }
+
+        .refresh-loading {
+            animation: loading 700ms ease-in-out;
+        }
+        @keyframes loading {
+            0% {
+                transform: rotate(0);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }  
     }
 
     .content {

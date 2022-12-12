@@ -28,6 +28,7 @@ const Popup = () => {
     const [ip, setIp] = useState<string>('');
     const [proxyServers, setProxyServers] = useState<TProxyServer[]>([]);
     const [config, setConfig] = useState<any>({});
+    const [refreshLoading, setLoading] = useState<boolean>(false);
 
     // 每次打开popup先使用缓存渲染，再请求最新数据
     useEffect(() => {
@@ -53,6 +54,7 @@ const Popup = () => {
 
     // 代理规则变更时计算当前开启的规则数量并展示在badge中
     useEffect(() => {
+        if (isEmpty(config)) return;
         let ruleOpenCount = 0;
         proxyServers.forEach((server) => {
             server.rules.forEach((rule) => {
@@ -120,6 +122,10 @@ const Popup = () => {
 
     // 刷新ip地址
     const refreshIpAddress = () => {
+        setLoading(true)
+        setTimeout(() => {
+            setLoading(false)
+        }, 700);
         if (config.ipGetMode !== 'fixed') {
             getLocalIp().then(() => {
                 message.success('刷新ip成功');
@@ -172,6 +178,7 @@ const Popup = () => {
                     你的ip: {ip}{' '}
                     <Tooltip title="刷新ip并获取最新数据">
                         <SyncOutlined
+                            className={refreshLoading ? 'refresh-loading' : ''}
                             style={{ cursor: 'pointer' }}
                             onClick={refreshIpAddress}
                         />

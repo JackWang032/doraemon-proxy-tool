@@ -6,10 +6,12 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const ASSET_PATH = process.env.ASSET_PATH || '/';
 const ROOT_PATH = path.resolve(__dirname, './')
 const resolvePath = dir => path.resolve(ROOT_PATH, dir)
+const isDev = env.NODE_ENV === 'development'
 
 const alias = {
   'react-dom': '@hot-loader/react-dom',
@@ -65,7 +67,7 @@ const options = {
         // in the `src` directory
         use: [
           {
-            loader: 'style-loader',
+            loader: isDev ? "style-loader" : MiniCssExtractPlugin.loader,
           },
           {
             loader: 'css-loader',
@@ -82,10 +84,6 @@ const options = {
         test: new RegExp('.(' + fileExtensions.join('|') + ')$'),
         type: 'asset/resource',
         exclude: /node_modules/,
-        // loader: 'file-loader',
-        // options: {
-        //   name: '[name].[ext]',
-        // },
       },
       {
         test: /\.html$/,
@@ -105,10 +103,6 @@ const options = {
         ],
         exclude: /node_modules/,
       },
-      {
-        test:/\.md$/,
-        loader:'raw-loader'
-      }
     ],
   },
   resolve: {
@@ -171,13 +165,14 @@ const options = {
       chunks: ['popup'],
       cache: false,
     }),
-  ],
+    isDev ? undefined : new MiniCssExtractPlugin(),
+  ].filter(Boolean),
   infrastructureLogging: {
     level: 'info',
   },
 };
 
-if (env.NODE_ENV === 'development') {
+if (isDev) {
   options.devtool = 'cheap-module-source-map';
 } else {
   options.optimization = {

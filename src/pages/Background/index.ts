@@ -1,14 +1,10 @@
 import api from '@/api';
 
 const getLocalIp = async () => {
-    const localData = await chrome.storage.local.get('config');
-    const { config } = localData;
-    if (config?.ipGetMode === 'auto') {
-        const res = await api.getLocalIp();
-        if (res.success) {
-            const ip = res.data?.localIp || '';
-            await chrome.storage.local.set({ ip });
-        }
+    const res = await api.getLocalIp();
+    if (res.success) {
+        const ip = res.data?.localIp || '';
+        await chrome.storage.local.set({ ip });
     }
 };
 

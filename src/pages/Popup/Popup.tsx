@@ -8,8 +8,15 @@ import {
 import './Popup.scss';
 import { Card, Col, Empty, message, Row, Switch, Tooltip } from 'antd';
 import { cloneDeep, isEmpty } from 'lodash';
-import { doraemonUrls } from '@/const';
+import { doraemonUrl } from '@/const';
 import api from '@/api';
+
+message.config({
+  top: 30,
+  duration: 1,
+  maxCount: 3,
+  rtl: true,
+});
 
 const POPUP_SIZE = {
     small: [320, 380],
@@ -30,8 +37,8 @@ const Popup = () => {
                 setProxyServers(res.proxyServers);
                 setIp(res.ip);
                 setConfig(res.config);
+                config.ipGetMode !== 'fixed' && getLocalIp().then(getProxyServers);
             });
-        getProxyServers();
     }, []);
 
     useEffect(() => {
@@ -54,19 +61,28 @@ const Popup = () => {
         chrome.action.setBadgeText({ text: '' + ruleOpenCount });
     }, [proxyServers]);
 
+    const getLocalIp = async () => {
+        const res = await api.getLocalIp();
+        if (res.success) {
+            const ip = res.data?.localIp || '';
+            setIp(ip)
+            await chrome.storage.local.set({ ip });
+        }
+    };
+
     const getProxyServers = async () => {
         const { ip } = await chrome.storage.local.get('ip');
         try {
             const res = await api.getProxyServers({ userIP: ip });
             if (res.success) {
                 const serverList = res.data || [];
+                setProxyServers(serverList);
                 await chrome.storage.local.set({
                     proxyServers: serverList,
                 });
-                setProxyServers(serverList);
             }
         } catch (error) {
-            message.error('获取最新数据失败 ' + error);
+            message.error('获取最新数据失败,可尝试关闭vpn,错误信息：' + error);
         }
     };
 
@@ -96,23 +112,17 @@ const Popup = () => {
                     message.error('更新失败');
                 }
             })
-            .catch(() => {
-                message.error('更新失败');
+            .catch((error) => {
+                message.error('更新失败,错误信息:' + error);
             });
     };
 
     // 刷新ip地址
-    const refreshIpAddress = async () => {
-        const res = await api.getLocalIp();
-        if (res.success) {
-            const newIp = res.data?.localIp || '';
-            if (newIp !== ip) {
-                await chrome.storage.local.set({ ip: newIp });
-                setIp(newIp);
-                getProxyServers();
-            }
-            message.success({ content: '刷新ip成功', duration: 1 });
-        }
+    const refreshIpAddress = () => {
+        getLocalIp().then(() => {
+            message.success('刷新ip成功');
+            getProxyServers()
+        })
     };
 
     // 打开配置页
@@ -143,7 +153,7 @@ const Popup = () => {
                 const tab = tabs[0];
                 const index = (tab?.index || 0) + 1;
                 chrome.tabs.create({
-                    url: `${doraemonUrls[0]}?projectId=${serverId}`,
+                    url: `${doraemonUrl}?projectId=${serverId}`,
                     active: true,
                     index: index,
                 });

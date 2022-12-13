@@ -13,7 +13,7 @@
     "128": "icon-128.png"
   },
   "permissions": ["storage", "tabs"],
-  "host_permissions": ["http://doraemon.dtstack.com/*", "http://doraemon.dtstack.com:7001/*"],
+  "host_permissions": ["http://doraemon.dtstack.com/*", "http://doraemon.dtstack.com:7001/*", "http://172.16.100.225:7001/*"],
   "content_scripts": [
     {
       "matches": ["http://172.16.100.225:7001/*", "http://doraemon.dtstack.com:7001/*", "http://doraemon.dtstack.com/*"],

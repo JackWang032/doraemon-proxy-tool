@@ -168,7 +168,7 @@ const Popup = () => {
             <div className="header">
                 <p>
                     你的ip: {ip}{' '}
-                    <Tooltip title="刷新ip并获取最新数据">
+                    <Tooltip title="刷新ip并获取最新数据" placement='right'>
                         <SyncOutlined
                             className={refreshLoading ? 'refresh-loading' : ''}
                             style={{ cursor: 'pointer' }}
@@ -220,7 +220,7 @@ const Popup = () => {
                                 justify="space-between"
                                 align="middle"
                             >
-                                <Col className='rule-remark' title={rule.remark}>{rule.remark || '此规则无备注信息'}</Col>
+                                <Col className='rule-remark' title={rule.remark}>{rule.remark || '--'}</Col>
                                 <Col className='rule-actions'>
                                     <Switch
                                         checked={rule.status === 1}

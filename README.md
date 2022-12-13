@@ -16,7 +16,7 @@
 3. 浏览器加载扩展程序选择 build 文件夹
 
 ### 或者直接下载打包好的扩展程序
-+ [doraemon-proxy-tool-v1.0.1.zip](https://github.com/JackWang032/doraemon-proxy-tool/releases/tag/v1.0.1)
++ [doraemon-proxy-tool-v1.1.0.zip](https://github.com/JackWang032/doraemon-proxy-tool/releases/tag/v1.1.0)
 
 &nbsp;&nbsp; 浏览器加载已解压的扩展程序选择刚解压出的文件夹
 

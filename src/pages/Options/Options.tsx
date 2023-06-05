@@ -3,11 +3,13 @@ import {
     Divider,
     Form,
     Input,
+    InputNumber,
     Radio,
 } from 'antd';
 import IconToolTip from './IconToolTip';
 import { useForm } from 'antd/es/form/Form';
-import { isEmpty } from 'lodash';
+import { cloneDeep, isEmpty } from 'lodash';
+import { POPUP_SIZE_TYPE } from '@/const';
 import './Options.scss';
 
 interface IProps {}
@@ -18,8 +20,9 @@ const formItemLayout = {
 
 const Options: React.FC<IProps> = () => {
     const [ip, setIp] = useState<string>('');
-    const [config, setConfig] = useState<any>();
+    const [config, setConfig] = useState<IConfig>();
     const [form] = useForm();
+    const sizeType = Form.useWatch(['size', 'type'], form);
 
     useEffect(() => {
         chrome.storage.local
@@ -44,12 +47,24 @@ const Options: React.FC<IProps> = () => {
             setIp(changedValues.ip);
             chrome.storage.local.set({ ip: changedValues.ip });
         }
-        const newConfig = Object.assign({}, config);
+        const newConfig = cloneDeep(config) || {} as IConfig;
         if (changedValues.ipGetMode) {
             newConfig.ipGetMode = changedValues.ipGetMode;
         }
         if (changedValues.size) {
-            newConfig.size = changedValues.size;
+            const sizeType = changedValues.size.type
+            const isChangeToCustomSize = sizeType === POPUP_SIZE_TYPE.CUSTOM;
+            if (isChangeToCustomSize) {
+                newConfig.size.width = 300;
+                newConfig.size.height = 400;
+            }
+            newConfig.size = Object.assign(
+                newConfig.size,
+                changedValues.size,
+                !isChangeToCustomSize && sizeType !== undefined
+                    ? { width: null, height: null }
+                    : {}
+            ); 
         }
         if (changedValues.theme) {
             newConfig.theme = changedValues.theme;
@@ -71,6 +86,7 @@ const Options: React.FC<IProps> = () => {
                     {...formItemLayout}
                     style={{ width: '60%', minWidth: 650 }}
                     onValuesChange={handleFormChange}
+                    preserve={false}
                 >
                     <div className="option-item">
                         <div className="option-title">IP设置</div>
@@ -105,15 +121,30 @@ const Options: React.FC<IProps> = () => {
                     <div className="option-item">
                         <div className="option-title">外观</div>
                         <Form.Item
-                            name="size"
+                            name={['size', 'type']}
                             label="Popup大小"
-                            initialValue={config.size}
+                            initialValue={config.size?.type}
                         >
                             <Radio.Group>
-                                <Radio value="small">小</Radio>
-                                <Radio value="default">默认</Radio>
-                                <Radio value="large">大</Radio>
-                                <Radio value="auto">自适应</Radio>
+                                <Radio value={POPUP_SIZE_TYPE.SMALL}>小</Radio>
+                                <Radio value={POPUP_SIZE_TYPE.DEFAULT}>默认</Radio>
+                                <Radio value={POPUP_SIZE_TYPE.LARGE}>大</Radio>
+                                <Radio value={POPUP_SIZE_TYPE.AUTO}>自适应</Radio>
+                                <Radio value={POPUP_SIZE_TYPE.CUSTOM}>
+                                    <div className='custom-size'>
+                                        <span>自定义</span>
+                                        {sizeType === POPUP_SIZE_TYPE.CUSTOM && (
+                                        <div className='form-item--inline'>
+                                            <Form.Item name={['size', 'width']} label='宽' initialValue={config.size?.width || 300}>
+                                                <InputNumber min={0}/>
+                                            </Form.Item>
+                                            <Form.Item name={['size', 'height']} label='高' initialValue={config.size?.height || 400}>
+                                                <InputNumber min={0}/>
+                                            </Form.Item>
+                                        </div>
+                                    )}
+                                    </div>
+                                </Radio>
                             </Radio.Group>
                         </Form.Item>
                         <Form.Item

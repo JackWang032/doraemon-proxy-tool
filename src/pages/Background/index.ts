@@ -1,4 +1,5 @@
 import api from '@/api';
+import { POPUP_SIZE_TYPE } from '@/const';
 
 const getLocalIp = async () => {
     const res = await api.getLocalIp();
@@ -25,7 +26,7 @@ chrome.runtime.onInstalled.addListener(async () => {
         proxyServers: [],
         config: {
             ipGetMode: 'auto', // ip获取方式 auto 自动获取， fixed 固定ip
-            size: 'default', // popup大小 small, default, large, auto
+            size: { type: POPUP_SIZE_TYPE.DEFAULT, width: null, height: null }, // popup大小 small, default, large, auto, custom
             theme: 'auto', // light, dark, auto
         },
     });

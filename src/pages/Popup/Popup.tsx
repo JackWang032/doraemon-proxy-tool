@@ -8,7 +8,7 @@ import {
 import './Popup.scss';
 import { Card, Col, Empty, message, Row, Switch, Tooltip } from 'antd';
 import { cloneDeep, isEmpty } from 'lodash';
-import { doraemonUrl } from '@/const';
+import { POPUP_SIZE_TYPE, doraemonUrl } from '@/const';
 import api from '@/api';
 
 message.config({
@@ -19,15 +19,15 @@ message.config({
 });
 
 const POPUP_SIZE = {
-    small: [320, 380],
-    default: [416, 494],
-    large: [512, 608],
+    [POPUP_SIZE_TYPE.SMALL]: [320, 380],
+    [POPUP_SIZE_TYPE.DEFAULT]: [416, 494],
+    [POPUP_SIZE_TYPE.LARGE]: [512, 608],
 };
 
 const Popup = () => {
     const [ip, setIp] = useState<string>('');
     const [proxyServers, setProxyServers] = useState<TProxyServer[]>([]);
-    const [config, setConfig] = useState<any>({});
+    const [config, setConfig] = useState<Partial<IConfig>>({});
     const [refreshLoading, setLoading] = useState<boolean>(false);
 
     // 每次打开popup先使用缓存渲染，再请求最新数据
@@ -133,14 +133,20 @@ const Popup = () => {
     };
 
     const getSize = () => {
-        if (config.size === 'auto') {
+        if (config.size?.type === POPUP_SIZE_TYPE.AUTO) {
             return {
                 width: 416,
                 minHeight: 300,
                 maxHeight: 494,
             };
         }
-        const [width, height] = POPUP_SIZE[config.size || 'default'];
+        if (config.size?.type === POPUP_SIZE_TYPE.CUSTOM) {
+            return {
+                width: config.size.width,
+                height: config.size.height,
+            };
+        }
+        const [width, height] = POPUP_SIZE[config.size?.type || POPUP_SIZE_TYPE.DEFAULT];
         return {
             width,
             height,

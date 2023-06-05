@@ -17,3 +17,17 @@
         margin-bottom: 10px;
     }
 }
+
+.custom-size {
+    display: flex;
+    align-items: center;
+    .form-item--inline {
+        margin-left: 16px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        .ant-form-item {
+            margin-bottom: 0;
+        }
+    }
+}

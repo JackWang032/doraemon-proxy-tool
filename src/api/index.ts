@@ -23,4 +23,13 @@ export default {
             body: JSON.stringify(params),
         });
     },
+
+    // 更新规则的ip
+    updateRuleIp: (params: { id: number; ip: string; }) => {
+        return request('/api/proxy-server/update-rule-status', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json;charset=UTF-8' },
+            body: JSON.stringify(params),
+        });
+    },
 };

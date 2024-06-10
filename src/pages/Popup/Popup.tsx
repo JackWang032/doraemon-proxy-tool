@@ -5,17 +5,17 @@ import {
     SettingOutlined,
     SyncOutlined,
 } from '@ant-design/icons';
-import './Popup.scss';
-import { Card, Col, Empty, message, Row, Switch, Tooltip } from 'antd';
+import { Card, Col, Empty, message, Modal, Row, Switch, Tooltip } from 'antd';
 import { cloneDeep, isEmpty } from 'lodash';
 import { POPUP_SIZE_TYPE, doraemonUrl } from '@/const';
 import api from '@/api';
+import './Popup.scss';
 
 message.config({
-  top: 30,
-  duration: 2,
-  maxCount: 3,
-  rtl: true,
+    top: 30,
+    duration: 2,
+    maxCount: 3,
+    rtl: true,
 });
 
 const POPUP_SIZE = {
@@ -39,7 +39,7 @@ const Popup = () => {
                 setIp(res.ip);
                 setConfig(res.config);
                 const isAutoIp = res.config.ipGetMode !== 'fixed';
-                isAutoIp ? getLocalIp().then(getProxyServers) : getProxyServers()
+                isAutoIp ? getLocalIp() : getProxyServers();
             });
     }, []);
 
@@ -57,10 +57,44 @@ const Popup = () => {
 
     const getLocalIp = async () => {
         const res = await api.getLocalIp();
+        const { proxyServers } = await chrome.storage.local.get({
+            proxyServers: [],
+        });
         if (res.success) {
-            const ip = res.data?.localIp || '';
-            setIp(ip)
-            await chrome.storage.local.set({ ip });
+            const currentIp = res.data?.localIp || '';
+            const callback = async () => {
+                setIp(currentIp);
+                await chrome.storage.local.set({ ip: currentIp });
+                getProxyServers();
+            };
+
+            if (currentIp !== ip && ip) {
+                Modal.confirm({
+                    title: '检测到ip发生变化，是否更新所有规则至当前ip?',
+                    onOk() {
+                        let promises: Promise<any>[] = [];
+                        for (const proxyServer of proxyServers) {
+                            if (proxyServer.rules?.length) {
+                                for (const rule of proxyServer.rules) {
+                                    const request = api.updateRuleIp({
+                                        id: rule.id,
+                                        ip: currentIp,
+                                    });
+                                    promises.push(request);
+                                }
+                            }
+                        }
+                        return Promise.all(promises).then(() => {
+                            callback();
+                        });
+                    },
+                    onCancel: () => {
+                        callback();
+                    },
+                });
+            } else {
+                callback();
+            }
         }
     };
 
@@ -113,14 +147,13 @@ const Popup = () => {
 
     // 刷新ip地址
     const refreshIpAddress = () => {
-        setLoading(true)
+        setLoading(true);
         setTimeout(() => {
-            setLoading(false)
+            setLoading(false);
         }, 700);
         if (config.ipGetMode !== 'fixed') {
             getLocalIp().then(() => {
                 message.success('刷新ip成功');
-                getProxyServers();
             });
         } else {
             getProxyServers();
@@ -146,7 +179,8 @@ const Popup = () => {
                 height: config.size.height,
             };
         }
-        const [width, height] = POPUP_SIZE[config.size?.type || POPUP_SIZE_TYPE.DEFAULT];
+        const [width, height] =
+            POPUP_SIZE[config.size?.type || POPUP_SIZE_TYPE.DEFAULT];
         return {
             width,
             height,
@@ -167,14 +201,15 @@ const Popup = () => {
                 });
             });
     };
-    if (isEmpty(config))return null
+
+    if (isEmpty(config)) return null;
 
     return (
         <div className="container" style={getSize()}>
             <div className="header">
                 <p>
                     你的ip: {ip}{' '}
-                    <Tooltip title="刷新ip并获取最新数据" placement='right'>
+                    <Tooltip title="刷新ip并获取最新数据" placement="right">
                         <SyncOutlined
                             className={refreshLoading ? 'refresh-loading' : ''}
                             style={{ cursor: 'pointer' }}
@@ -226,8 +261,13 @@ const Popup = () => {
                                 justify="space-between"
                                 align="middle"
                             >
-                                <Col className='rule-remark' title={rule.remark}>{rule.remark || '--'}</Col>
-                                <Col className='rule-actions'>
+                                <Col
+                                    className="rule-remark"
+                                    title={rule.remark}
+                                >
+                                    {rule.remark || '--'}
+                                </Col>
+                                <Col className="rule-actions">
                                     <Switch
                                         checked={rule.status === 1}
                                         onChange={(checked) => {

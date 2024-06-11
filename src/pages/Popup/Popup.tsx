@@ -67,10 +67,12 @@ const Popup = () => {
                 await chrome.storage.local.set({ ip: currentIp });
                 getProxyServers();
             };
-
-            if (currentIp !== ip && ip) {
+            let { ip: oldIp } = await chrome.storage.local.get({ ip: '' });
+            if (currentIp !== oldIp && oldIp) {
                 Modal.confirm({
-                    title: '检测到ip发生变化，是否更新所有规则至当前ip?',
+                    title: `检测到ip发生变化，是否更新所有规则至当前ip(${currentIp})下?`,
+                    okText: '确定',
+                    cancelText: '取消',
                     onOk() {
                         let promises: Promise<any>[] = [];
                         for (const proxyServer of proxyServers) {

@@ -6,7 +6,7 @@ import {
     InputNumber,
     Radio,
 } from 'antd';
-import IconToolTip from './IconToolTip';
+import IconTooltip from './IconToolTip';
 import { useForm } from 'antd/es/form/Form';
 import { cloneDeep, isEmpty } from 'lodash';
 import { POPUP_SIZE_TYPE } from '@/const';
@@ -108,12 +108,12 @@ const Options: React.FC<IProps> = () => {
                             <Radio.Group>
                                 <Radio value="auto">
                                     自动获取
-                                    <IconToolTip title="每次启动浏览器时获取" />
+                                    <IconTooltip title="每次启动浏览器时获取" />
                                 </Radio>
                                 <br />
                                 <Radio value="fixed">
                                     固定IP
-                                    <IconToolTip title="将当前ip设为固定ip" />
+                                    <IconTooltip title="将当前ip设为固定ip" />
                                 </Radio>
                             </Radio.Group>
                         </Form.Item>

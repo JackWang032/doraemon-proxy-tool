@@ -2,7 +2,7 @@ import React from 'react';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { Tooltip, TooltipProps } from 'antd';
 
-const IconToolTip: React.FC<TooltipProps> = (props: TooltipProps) => {
+const IconTooltip: React.FC<TooltipProps> = (props: TooltipProps) => {
     return (
         <Tooltip color="blue" {...props}>
             <InfoCircleOutlined style={{ marginLeft: 5 }} />
@@ -10,4 +10,4 @@ const IconToolTip: React.FC<TooltipProps> = (props: TooltipProps) => {
     );
 };
 
-export default IconToolTip;
+export default IconTooltip;

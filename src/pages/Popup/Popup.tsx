@@ -2,10 +2,21 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import {
     EnterOutlined,
+    LinkOutlined,
     SettingOutlined,
     SyncOutlined,
 } from '@ant-design/icons';
-import { Card, Col, Empty, message, Modal, Row, Switch, Tooltip } from 'antd';
+import {
+    Card,
+    Col,
+    Empty,
+    message,
+    Modal,
+    Row,
+    Space,
+    Switch,
+    Tooltip,
+} from 'antd';
 import { cloneDeep, isEmpty } from 'lodash';
 import { POPUP_SIZE_TYPE, doraemonUrl } from '@/const';
 import api from '@/api';
@@ -270,16 +281,27 @@ const Popup = () => {
                                     {rule.remark || '--'}
                                 </Col>
                                 <Col className="rule-actions">
-                                    <Switch
-                                        checked={rule.status === 1}
-                                        onChange={(checked) => {
-                                            updateRuleStatus(
-                                                proxyServer.serverId,
-                                                rule.id,
-                                                checked
-                                            );
-                                        }}
-                                    />
+                                    <Space size={8}>
+                                        <Tooltip title={`访问${rule.target}`}>
+                                            <LinkOutlined
+                                                onClick={() =>
+                                                    window.open(
+                                                        rule.target + '/portal'
+                                                    )
+                                                }
+                                            />
+                                        </Tooltip>
+                                        <Switch
+                                            checked={rule.status === 1}
+                                            onChange={(checked) => {
+                                                updateRuleStatus(
+                                                    proxyServer.serverId,
+                                                    rule.id,
+                                                    checked
+                                                );
+                                            }}
+                                        />
+                                    </Space>
                                 </Col>
                             </Row>
                         ))}

@@ -1,6 +1,6 @@
 {
   "name": "doraemon-proxy-tool",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "author": "Jialan",
   "description": "A chrome extension that help you to proxy quickly",
   "repository": "https://github.com/JackWang032/doraemon-proxy-tool",
@@ -16,7 +16,8 @@
     "start": "node scripts/webserver.js",
     "preinstall": "node scripts/preinstall.js",
     "pnpm:devPreinstall": "node scripts/preinstall.js",
-    "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'"
+    "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
+    "release": "standard-version"
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
@@ -57,6 +58,7 @@
     "sass": "^1.55.0",
     "sass-loader": "^12.4.0",
     "source-map-loader": "^3.0.1",
+    "standard-version": "^9.5.0",
     "style-loader": "^3.3.1",
     "terser-webpack-plugin": "^5.3.1",
     "ts-loader": "^9.2.6",

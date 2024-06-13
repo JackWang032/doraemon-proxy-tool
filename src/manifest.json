@@ -13,12 +13,17 @@
     "128": "icon-128.png"
   },
   "permissions": ["storage", "tabs"],
-  "host_permissions": ["http://doraemon.dtstack.com/*", "http://doraemon.dtstack.com:7001/*", "http://172.16.100.225:7001/*"],
+  "host_permissions": ["http://doraemon.dtstack.com/*", "http://doraemon.dtstack.com:7001/*", "http://172.16.100.225:7001/*", "http://*.devops.dtstack.cn/*"],
   "content_scripts": [
     {
-      "matches": ["http://172.16.100.225:7001/*", "http://doraemon.dtstack.com:7001/*", "http://doraemon.dtstack.com/*"],
+      "matches": ["http://*.devops.dtstack.cn/*"],
       "js": ["contentScript.bundle.js"],
-      "css": ["content.styles.css"]
+      "css": ["content.styles.css"],
+      "run_at": "document_start"
     }
-  ]
+  ],
+  "web_accessible_resources": [{ 
+    "resources": ["devops.js"],
+    "matches": ["http://*.devops.dtstack.cn/*"]
+  }]
 }

@@ -5,8 +5,9 @@ import {
     Input,
     InputNumber,
     Radio,
+    Switch,
 } from 'antd';
-import IconTooltip from './IconToolTip';
+import IconTooltip from './IconTooltip';
 import { useForm } from 'antd/es/form/Form';
 import { cloneDeep, isEmpty } from 'lodash';
 import { POPUP_SIZE_TYPE } from '@/const';
@@ -68,6 +69,9 @@ const Options: React.FC<IProps> = () => {
         }
         if (changedValues.theme) {
             newConfig.theme = changedValues.theme;
+        }
+        if ('devopsInjectEnabled' in changedValues) {
+            newConfig.devopsInjectEnabled = changedValues.devopsInjectEnabled;
         }
         setConfig(newConfig);
         chrome.storage.local.set({ config: newConfig });
@@ -157,6 +161,15 @@ const Options: React.FC<IProps> = () => {
                                 <Radio value="light">亮色</Radio>
                                 <Radio value="auto">自适应</Radio>
                             </Radio.Group>
+                        </Form.Item>
+                        <Form.Item
+                            name="devopsInjectEnabled"
+                            label="devops注入"
+                            tooltip='开启后会重写devops开发环境的config配置，接管跳转地址至线上环境'
+                            initialValue={config.devopsInjectEnabled}
+                            valuePropName='checked'
+                        >
+                            <Switch />
                         </Form.Item>
                     </div>
                 </Form>

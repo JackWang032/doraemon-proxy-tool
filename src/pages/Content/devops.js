@@ -1,0 +1,77 @@
+// window.APP_CONF
+
+(function () {
+    const CONFIG_PATH = 'public/config/config.js';
+    const DEV_PREFIXS = ['dev.', 'local.'];
+    const { hostname, port, pathname, protocol } = window.location;
+
+    // 是否是devops开发环境
+    function getIsDev(url) {
+        return (
+            DEV_PREFIXS.some((prefix) => url.hostname.startsWith(prefix)) ||
+            url.port !== '80'
+        );
+    }
+
+    if (!getIsDev(window.location)) return;
+
+    // rewrite config.js
+    const onlineEnvHostname = hostname.replace(/^(dev\.|local\.)/, '');
+    const onlineUrl =
+        protocol + '//' + onlineEnvHostname + pathname + CONFIG_PATH;
+    var configScript = document.createElement('script');
+    configScript.src = onlineUrl;
+    document.documentElement.appendChild(configScript);
+
+    function isValidUrl(string) {
+        try {
+            const url = new URL(string);
+            return url.protocol === 'http:' || url.protocol === 'https:'
+                ? true
+                : false;
+        } catch (_) {
+            return false;
+        }
+    }
+
+    function getRewrteLinkAddress(address) {
+        if (!isValidUrl(address)) return address;
+        const url = new URL(address);
+        const isDev = getIsDev(url);
+        if (!isDev) return address;
+
+        // 跳转到其他产品
+        if (pathname !== url.pathname) {
+            const rewriteAddr =
+                url.protocol +
+                '//' +
+                onlineEnvHostname +
+                url.pathname +
+                url.hash +
+                url.search;
+            return rewriteAddr;
+        } else {
+            return address;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.body.addEventListener('click', function (event) {
+            var target = event.target?.closest('a');
+
+            if (target && event.href !== '') {
+                event.preventDefault();
+                const rewriteLinkAddress = getRewrteLinkAddress(target.href);
+                if (target.href !== rewriteLinkAddress)
+                    console.log(
+                        `Rewrite link from ${target.href} to ${rewriteLinkAddress}`
+                    );
+                if (target.target === '_blank') {
+                    window.open(rewriteLinkAddress, '_blank');
+                } else {
+                    window.location.href = rewriteLinkAddress;
+                }
+            }
+        });
+    });
+})();

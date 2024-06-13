@@ -14,4 +14,7 @@ interface IConfig {
     ipGetMode: 'auto' | 'fixed';
     size: { type: any; width: number | null; height: number | null };
     theme: 'auto' | 'dark' | 'auto';
+    devopsInjectEnabled: boolean;
 }
+
+declare var window: any;

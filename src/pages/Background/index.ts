@@ -28,6 +28,7 @@ chrome.runtime.onInstalled.addListener(async () => {
             ipGetMode: 'auto', // ip获取方式 auto 自动获取， fixed 固定ip
             size: { type: POPUP_SIZE_TYPE.DEFAULT, width: null, height: null }, // popup大小 small, default, large, auto, custom
             theme: 'auto', // light, dark, auto
+            devopsInjectEnabled: true, // 是否开启devops开发环境代码注入
         },
     });
     getLocalIp().then(getProxyServers)

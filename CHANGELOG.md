@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/JackWang032/doraemon-proxy-tool/compare/v1.2.0...v1.2.1) (2024-06-17)
+
+
+### Features
+
+* add github link ([46341a2](https://github.com/JackWang032/doraemon-proxy-tool/commit/46341a259c49c995b4d694eca05255bb2c8485c1))
+
+
+### Bug Fixes
+
+* update dev port judgement ([4b98c44](https://github.com/JackWang032/doraemon-proxy-tool/commit/4b98c441e2cd6ba527abcc2cd6fd7a01b05990c1))
+
 ## [1.2.0](https://github.com/JackWang032/doraemon-proxy-tool/compare/v1.1.1...v1.2.0) (2024-06-13)
 
 

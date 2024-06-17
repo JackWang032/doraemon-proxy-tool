@@ -5,6 +5,7 @@ import {
     Input,
     InputNumber,
     Radio,
+    Row,
     Switch,
 } from 'antd';
 import IconTooltip from './IconTooltip';
@@ -12,6 +13,7 @@ import { useForm } from 'antd/es/form/Form';
 import { cloneDeep, isEmpty } from 'lodash';
 import { POPUP_SIZE_TYPE } from '@/const';
 import './Options.scss';
+import { GithubOutlined } from '@ant-design/icons';
 
 interface IProps {}
 const formItemLayout = {
@@ -80,9 +82,9 @@ const Options: React.FC<IProps> = () => {
     return (
         <div className="container">
             <header>
-                <div className="title">系统设置</div>
+               <div className="title">系统设置</div>
+                   <a href='https://github.com/JackWang032/doraemon-proxy-tool' target='_blank'> <GithubOutlined style={{fontSize: 20}}/></a>
             </header>
-
             <Divider />
             {config && (
                 <Form

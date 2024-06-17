@@ -3,13 +3,13 @@
 (function () {
     const CONFIG_PATH = 'public/config/config.js';
     const DEV_PREFIXS = ['dev.', 'local.'];
-    const { hostname, port, pathname, protocol } = window.location;
+    const { hostname, pathname, protocol } = window.location;
 
     // 是否是devops开发环境
     function getIsDev(url) {
         return (
             DEV_PREFIXS.some((prefix) => url.hostname.startsWith(prefix)) ||
-            url.port !== '80'
+            url.port !== '80' && url.port !== ''
         );
     }
 
@@ -59,7 +59,7 @@
         document.body.addEventListener('click', function (event) {
             var target = event.target?.closest('a');
 
-            if (target && event.href !== '') {
+            if (target && target.href !== '') {
                 event.preventDefault();
                 const rewriteLinkAddress = getRewrteLinkAddress(target.href);
                 if (target.href !== rewriteLinkAddress)
@@ -67,7 +67,7 @@
                         `Rewrite link from ${target.href} to ${rewriteLinkAddress}`
                     );
                 if (target.target === '_blank') {
-                    window.open(rewriteLinkAddress, '_blank');
+                    window.open(rewriteLinkAddress, '_blank', 'noopener');
                 } else {
                     window.location.href = rewriteLinkAddress;
                 }

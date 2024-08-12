@@ -9,7 +9,7 @@
     function getIsDev(url) {
         return (
             DEV_PREFIXS.some((prefix) => url.hostname.startsWith(prefix)) ||
-            url.port !== '80' && url.port !== ''
+            (url.port !== '80' && url.port !== '')
         );
     }
 
@@ -60,16 +60,17 @@
             var target = event.target?.closest('a');
 
             if (target && target.href !== '') {
-                event.preventDefault();
                 const rewriteLinkAddress = getRewrteLinkAddress(target.href);
-                if (target.href !== rewriteLinkAddress)
+                if (target.href !== rewriteLinkAddress) {
+                    event.preventDefault();
                     console.log(
                         `Rewrite link from ${target.href} to ${rewriteLinkAddress}`
                     );
-                if (target.target === '_blank') {
-                    window.open(rewriteLinkAddress, '_blank', 'noopener');
-                } else {
-                    window.location.href = rewriteLinkAddress;
+                    if (target.target === '_blank') {
+                        window.open(rewriteLinkAddress, '_blank', 'noopener');
+                    } else {
+                        window.location.href = rewriteLinkAddress;
+                    }
                 }
             }
         });

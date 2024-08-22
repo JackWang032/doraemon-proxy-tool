@@ -15,6 +15,14 @@ interface IConfig {
     size: { type: any; width: number | null; height: number | null };
     theme: 'auto' | 'dark' | 'auto';
     devopsInjectEnabled: boolean;
+    matchUrls: string;
+    quickLogin: {
+        enabled: boolean;
+        username: string;
+        password: string;
+        jumpProductPath: string;
+        defaultTenantId: string;
+    }
 }
 
 declare var window: any;

@@ -1,29 +1,31 @@
 {
-  "manifest_version": 3,
-  "name": "Doreamon Proxy Tool",
-  "description": "A chrome extension that help you to proxy",
-  "options_page": "options.html",
-  "background": { "service_worker": "background.bundle.js" },
-  "action": {
-    "default_popup": "popup.html",
-    "default_icon": "icon-128.png"
-  },
-  "icons": {
-    "16": "icon-16.png",
-    "128": "icon-128.png"
-  },
-  "permissions": ["storage", "tabs"],
-  "host_permissions": ["http://doraemon.dtstack.com/*", "http://doraemon.dtstack.com:7001/*", "http://172.16.100.225:7001/*", "http://*.devops.dtstack.cn/*"],
-  "content_scripts": [
-    {
-      "matches": ["http://*.devops.dtstack.cn/*"],
-      "js": ["contentScript.bundle.js"],
-      "css": ["content.styles.css"],
-      "run_at": "document_start"
-    }
-  ],
-  "web_accessible_resources": [{ 
-    "resources": ["devops.js"],
-    "matches": ["http://*.devops.dtstack.cn/*"]
-  }]
+    "manifest_version": 3,
+    "name": "Doreamon Proxy Tool",
+    "description": "A chrome extension that help you to proxy",
+    "options_page": "options.html",
+    "background": { "service_worker": "background.bundle.js" },
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": "icon-128.png"
+    },
+    "icons": {
+        "16": "icon-16.png",
+        "128": "icon-128.png"
+    },
+    "permissions": ["storage", "tabs"],
+    "host_permissions": ["<all_urls>"],
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["contentScript.bundle.js"],
+            "css": ["content.styles.css"],
+            "run_at": "document_start"
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["devops.js", "devops-login.js", "sm2.js"],
+            "matches": ["<all_urls>"]
+        }
+    ]
 }

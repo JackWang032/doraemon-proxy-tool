@@ -29,6 +29,14 @@ chrome.runtime.onInstalled.addListener(async () => {
             size: { type: POPUP_SIZE_TYPE.DEFAULT, width: null, height: null }, // popup大小 small, default, large, auto, custom
             theme: 'auto', // light, dark, auto
             devopsInjectEnabled: true, // 是否开启devops开发环境代码注入
+            matchUrls: '(\.devops\.dtstack\.cn$)|(^([a-zA-Z0-9]+\.)?[0-9]+x\.dtstack\.cn$)', // 代码注入匹配规则
+            quickLogin: {
+                enabled: true,
+                username: '',
+                password: '',
+                jumpProductPath: '/portal',
+                defaultTenantId: '1',
+            }
         },
     });
     getLocalIp().then(getProxyServers)
@@ -49,3 +57,10 @@ chrome.runtime.onStartup.addListener(async () => {
     chrome.action.setBadgeText({ text: '' + ruleOpenCount });
     config.ipGetMode !== 'fixed' && getLocalIp()
 });
+
+chrome.runtime.onMessage.addListener((request) => {
+    if (request.action === 'openOptionPage') {
+        chrome.runtime.openOptionsPage();
+    }
+})
+

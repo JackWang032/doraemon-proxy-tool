@@ -72,6 +72,9 @@ const Options: React.FC<IProps> = () => {
                 changedValues.quickLogin
             );
         }
+        if ('matchUrls' in changedValues) {
+            newConfig.matchUrls = changedValues.matchUrls;
+        }
         setConfig(newConfig);
         chrome.storage.local.set({ config: newConfig });
     };
@@ -207,7 +210,7 @@ const Options: React.FC<IProps> = () => {
                         </Form.Item>
                         <Form.Item
                             name={['quickLogin', 'enabled']}
-                            label="快捷登录"
+                            label="快速登录"
                             tooltip="请保证环境中的验证码校验已关闭"
                             initialValue={config.quickLogin?.enabled}
                             valuePropName="checked"
@@ -270,7 +273,7 @@ const Options: React.FC<IProps> = () => {
                                                 'quickLogin',
                                                 'defaultTenantId',
                                             ]}
-                                            label="默认进入租户"
+                                            label="默认进入租户id"
                                             initialValue={
                                                 config.quickLogin
                                                     ?.defaultTenantId

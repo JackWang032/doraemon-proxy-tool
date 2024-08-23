@@ -5,27 +5,28 @@
     background-color: #333;
     color: #fff;
     text-align: center;
-    border-radius: 2px;
-    padding: 16px;
+    border-radius: 4px;
+    padding: 8px 16px;
     position: fixed;
     z-index: 1;
     left: 50%;
-    bottom: 60%;
+    top: 25%;
     font-size: 17px;
     opacity: 0;
-    transition: opacity 0.5s, bottom 0.5s;
+    transition: opacity 0.5s, top 0.5s;
 }
 
 .doraemon-toast--show {
     visibility: visible;
     opacity: 1;
-    bottom: 65%;
+    top: 20%;
 }
 
 .doraemon-login-btn {
     position: fixed;
-    top: 70%;
-    right: 80px;
+    top: 50%;
+    left: 50%;
+    transform: translate(calc(-50% + 605px), calc(-50% + 165px));
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -88,5 +89,5 @@
 }
 
 .doraemon-login-btn:active {
-    transform: translate(2px, 2px);
+    transform: translate(calc(-50% + 607px), calc(-50% + 167px));
 }

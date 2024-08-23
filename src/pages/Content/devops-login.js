@@ -88,12 +88,13 @@
     }
 
     async function execQuickLogin(username, password, jumpUrl, tenantId) {
-        const loginBtnText = document.querySelector('.doraemon-login-btn .doraemon-text');
-        loginBtnText.innerText = '登录中...'
-        const publicKey = await getPulicKey().catch(() => {
-             loginBtnText.innerText = '快速登录'
-        }
+        const loginBtnText = document.querySelector(
+            '.doraemon-login-btn .doraemon-text'
         );
+        loginBtnText.innerText = '登录中...';
+        const publicKey = await getPulicKey().catch(() => {
+            loginBtnText.innerText = '快速登录';
+        });
         if (!publicKey) {
             showToast('公钥获取失败，请稍后再试...');
             return;
@@ -154,10 +155,22 @@
                 ? '/publicService'
                 : jumpProductPath;
             configUrl.hash = '';
+
             const urlParams = getUrlParams();
-            // 优先取insightRedirectUrl的跳转地址
+
+            let insightRedirectUrl = '';
+            if (urlParams.insightRedirectUrl) {
+                const decodeUrl = decodeURIComponent(
+                    urlParams.insightRedirectUrl
+                );
+                const tempUrl = new URL(decodeUrl);
+                // 排除portal页，因为未登录被强制退出时默认会跳回portal页
+                if (!tempUrl.pathname.includes('/portal'))
+                    insightRedirectUrl = decodeUrl;
+            }
+            
             const jumpUrl =
-                urlParams.insightRedirectUrl && urlParams.tenantId
+                insightRedirectUrl && urlParams.tenantId
                     ? decodeURIComponent(urlParams.insightRedirectUrl)
                     : configUrl.toString();
 

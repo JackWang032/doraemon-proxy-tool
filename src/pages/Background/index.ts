@@ -81,7 +81,6 @@ const registerContectMenus = () => {
         title: '当前页打开',
         contexts: ['page'],
     });
-    chrome.contextMenus.onClicked.addListener(handleContextMenuClick);
 };
 
 // 插件安装时初始化
@@ -123,6 +122,8 @@ chrome.runtime.onStartup.addListener(async () => {
     chrome.action.setBadgeText({ text: '' + ruleOpenCount });
     config.ipGetMode !== 'fixed' && getLocalIp();
 });
+
+chrome.contextMenus.onClicked.addListener(handleContextMenuClick);
 
 chrome.runtime.onMessage.addListener((request) => {
     if (request.action === 'openOptionPage') {

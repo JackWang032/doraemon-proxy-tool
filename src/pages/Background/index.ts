@@ -20,6 +20,19 @@ const getProxyServers = async () => {
     }
 };
 
+const mergeConfigs = (oldConfig, newConfig) => {
+    for (let key in newConfig) {
+        if (newConfig.hasOwnProperty(key)) {
+            if (!oldConfig.hasOwnProperty(key) || oldConfig[key] === undefined) {
+                oldConfig[key] = newConfig[key];
+            } else if (typeof oldConfig[key] === 'object' && typeof newConfig[key] === 'object') {
+                mergeConfigs(oldConfig[key], newConfig[key]);
+            }
+        }
+    }
+    return oldConfig;
+}
+
 const getDevopsUrl = async (urlStr?: string) => {
     if (!urlStr) return '';
     const {
@@ -83,25 +96,32 @@ const registerContectMenus = () => {
     });
 };
 
+const initStorage = {
+    proxyServers: [],
+    config: {
+        ipGetMode: 'auto', // ip获取方式 auto 自动获取， fixed 固定ip
+        size: { type: POPUP_SIZE_TYPE.DEFAULT, width: null, height: null }, // popup大小 small, default, large, auto, custom
+        theme: 'auto', // light, dark, auto
+        devopsInjectEnabled: true, // 是否开启devops开发环境代码注入
+        matchUrls:
+            '(.devops.dtstack.cn$)|(^([a-zA-Z0-9]+.)?[0-9]+x.dtstack.cn$)', // 代码注入匹配规则
+        quickLogin: {
+            enabled: true,
+            username: '',
+            password: '',
+            jumpProductPath: '/portal',
+            defaultTenantId: '1',
+        },
+    },
+};
+
 // 插件安装时初始化
 chrome.runtime.onInstalled.addListener(async () => {
+    const { config = {} } = await chrome.storage.local.get('config');
+    const mergedConfig = mergeConfigs(config, initStorage.config);
     await chrome.storage.local.set({
-        proxyServers: [],
-        config: {
-            ipGetMode: 'auto', // ip获取方式 auto 自动获取， fixed 固定ip
-            size: { type: POPUP_SIZE_TYPE.DEFAULT, width: null, height: null }, // popup大小 small, default, large, auto, custom
-            theme: 'auto', // light, dark, auto
-            devopsInjectEnabled: true, // 是否开启devops开发环境代码注入
-            matchUrls:
-                '(.devops.dtstack.cn$)|(^([a-zA-Z0-9]+.)?[0-9]+x.dtstack.cn$)', // 代码注入匹配规则
-            quickLogin: {
-                enabled: true,
-                username: '',
-                password: '',
-                jumpProductPath: '/portal',
-                defaultTenantId: '1',
-            },
-        },
+        ...initStorage,
+        config: mergedConfig,
     });
     registerContectMenus();
     getLocalIp().then(getProxyServers);

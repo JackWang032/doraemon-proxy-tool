@@ -9,20 +9,25 @@
 1. 安装依赖
 
 ```
-yarn
+pnpm install
 ```
 
 2. 编译
 
 ```
-yarn build
+pnpm build
 ```
 
-3. 浏览器加载扩展程序选择 build 文件夹
+可选：根据版本语义化重新命名文件夹
+```
+pnpm repack
+```
+
+3. 浏览器加载扩展程序选择 doraemon-proxy-tool-xxx 文件夹
 
 ### 或者直接下载打包好的扩展程序
 
--   [doraemon-proxy-tool-v1.1.0.zip](https://github.com/JackWang032/doraemon-proxy-tool/releases/tag/v1.1.0)
+-   [Releases](https://github.com/JackWang032/doraemon-proxy-tool/releases)
 
 &nbsp;&nbsp;
 地址栏输入 chrome://extensions/ 进入扩展页面，点击加载已解压的扩展程序(需先开启右上角的开发者模式)，选择刚解压出的文件夹。

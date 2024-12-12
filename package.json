@@ -3,7 +3,10 @@
     "version": "1.5.0",
     "author": "Jialan",
     "description": "A chrome extension that help you to proxy quickly",
-    "repository": "https://github.com/JackWang032/doraemon-proxy-tool",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/JackWang032/doraemon-proxy-tool.git"
+    },
     "keywords": [
         "doraemon",
         "proxy",
@@ -14,8 +17,6 @@
     "scripts": {
         "build": "node scripts/build.js",
         "start": "node scripts/webserver.js",
-        "preinstall": "node scripts/preinstall.js",
-        "pnpm:devPreinstall": "node scripts/preinstall.js",
         "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
         "release": "standard-version",
         "repack": "node scripts/repack.js"
@@ -70,5 +71,9 @@
         "webpack": "^5.68.0",
         "webpack-cli": "^4.9.2",
         "webpack-dev-server": "^4.7.4"
-    }
+    },
+    "bugs": {
+        "url": "https://github.com/JackWang032/doraemon-proxy-tool/issues"
+    },
+    "homepage": "https://github.com/JackWang032/doraemon-proxy-tool#readme"
 }

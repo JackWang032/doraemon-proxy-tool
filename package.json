@@ -20,11 +20,13 @@
     "release": "standard-version"
   },
   "dependencies": {
+    "@ant-design/happy-work-theme": "^1.0.0",
     "@ant-design/icons": "^4.7.0",
     "@hot-loader/react-dom": "^17.0.2",
-    "antd": "^4.23.1",
+    "antd": "5.x",
     "lodash": "^4.17.21",
     "react": "^17.0.2",
+    "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^17.0.2",
     "react-hot-loader": "^4.13.0"
   },

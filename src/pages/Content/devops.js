@@ -21,6 +21,21 @@
         protocol + '//' + onlineEnvHostname + pathname + CONFIG_PATH;
     var configScript = document.createElement('script');
     configScript.src = onlineUrl;
+    configScript.onload = function () {
+        // 线上环境中可能会使用`location.origin`变量, 需要进行替换
+        if (!window.APP_CONF) return;
+        const rewriteUrl = new URL(onlineUrl);
+        const devOrigin = window.location.origin;
+        const onlineOrigin = rewriteUrl.origin;
+
+        const keys = Object.keys(window.APP_CONF);
+        keys.forEach((key) => {
+            const value = window.APP_CONF[key];
+            if (typeof value === 'string' && value.startsWith(devOrigin)) {
+                window.APP_CONF[key] = value.replace(devOrigin, onlineOrigin);
+            }
+        });
+    };
     document.documentElement.appendChild(configScript);
 
     function isValidUrl(string) {

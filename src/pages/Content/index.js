@@ -14,7 +14,7 @@ chrome.storage.local.get('config', function ({ config }) {
         document.documentElement.appendChild(hackElement);
     }
 
-    function getIsUic() {
+    function isUic() {
         const { hostname, pathname } = window.location;
         const devopsEnvRegex = /base(\d+)\.devops\.dtstack\.cn/;
 
@@ -33,7 +33,7 @@ chrome.storage.local.get('config', function ({ config }) {
         }
     }
 
-    if (config?.quickLogin?.enabled && getIsUic()) {
+    if (config?.quickLogin?.enabled && isUic()) {
         var sm2Script = document.createElement('script');
         sm2Script.src = chrome.runtime.getURL('sm2.js');
         document.documentElement.appendChild(sm2Script);

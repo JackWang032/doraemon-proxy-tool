@@ -11,3 +11,8 @@ export enum POPUP_SIZE_TYPE {
     AUTO,
     CUSTOM
 }
+
+export enum POPUP_TAB {
+    PROXY = 'proxy',
+    ENV = 'env'
+}

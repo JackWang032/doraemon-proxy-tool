@@ -1,7 +1,6 @@
 @use 'sass:meta';
 
 body:not(.dark) {
-    @include meta.load-css('node_modules/antd/dist/antd.css', $with: null);
     font-size: 14px;
     .content {
         background-color: aliceblue;
@@ -10,10 +9,9 @@ body:not(.dark) {
 }
 
 body.dark {
-    @include meta.load-css('node_modules/antd/dist/antd.dark.css', $with: null);
     font-size: 14px;
     .header {
-        background-color: #000;
+        background-color: #121314;
         color: rgba(255, 255, 255, 0.85);
     }
 

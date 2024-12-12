@@ -1,5 +1,5 @@
 import api from '@/api';
-import { POPUP_SIZE_TYPE } from '@/const';
+import { POPUP_SIZE_TYPE, POPUP_TAB } from '@/const';
 
 const getLocalIp = async () => {
     const res = await api.getLocalIp();
@@ -79,7 +79,7 @@ const handleContextMenuClick = async (info, tab?: chrome.tabs.Tab) => {
 const registerContectMenus = () => {
     chrome.contextMenus.create({
         id: 'devops',
-        title: '环境跳转',
+        title: '环境翻转',
         contexts: ['page'],
     });
     chrome.contextMenus.create({
@@ -96,8 +96,12 @@ const registerContectMenus = () => {
     });
 };
 
-const initStorage = {
+export const initStorage: IStorageCache = {
+    // 接口缓存
     proxyServers: [],
+    envList: [],
+    ip: '',
+    // 配置缓存
     config: {
         ipGetMode: 'auto', // ip获取方式 auto 自动获取， fixed 固定ip
         size: { type: POPUP_SIZE_TYPE.DEFAULT, width: null, height: null }, // popup大小 small, default, large, auto, custom
@@ -113,6 +117,14 @@ const initStorage = {
             defaultTenantId: '1',
         },
     },
+    // 记录用户上次操作的状态
+    clientUserState: {
+        activeTab: POPUP_TAB.PROXY,
+        selectedTags: [],
+        activePanelKey: undefined,
+        envScrollTop: 0,
+        proxyScrollTop: 0
+    }
 };
 
 // 插件安装时初始化
@@ -124,23 +136,8 @@ chrome.runtime.onInstalled.addListener(async () => {
         config: mergedConfig,
     });
     registerContectMenus();
-    getLocalIp().then(getProxyServers);
-});
-
-// 每次浏览器启动时
-chrome.runtime.onStartup.addListener(async () => {
-    let ruleOpenCount = 0;
-    const { proxyServers, config } = await chrome.storage.local.get({
-        proxyServers: [],
-        config: {},
-    });
-    proxyServers.forEach((server) => {
-        server.rules.forEach((rule) => {
-            if (rule.status === 1) ruleOpenCount++;
-        });
-    });
-    chrome.action.setBadgeText({ text: '' + ruleOpenCount });
-    config.ipGetMode !== 'fixed' && getLocalIp();
+    await getLocalIp();
+    await getProxyServers();
 });
 
 chrome.contextMenus.onClicked.addListener(handleContextMenuClick);

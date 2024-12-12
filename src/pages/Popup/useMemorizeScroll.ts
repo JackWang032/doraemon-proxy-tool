@@ -30,18 +30,21 @@ const useMemorizeScroll: MemorizeScrollHook = (
     useEffect(() => {
         const handleScroll = (e) => {
             isMounted.current && memorize(e.target.scrollTop);
-        }
+        };
         const throttleScroll = throttle(handleScroll, 400);
         scrollElement.current?.addEventListener('scroll', throttleScroll);
 
         isMounted.current = true;
-        
+
         return () => {
-            scrollElement.current?.removeEventListener('scroll', throttleScroll);
-            scrollElement.current && memorize(scrollElement.current.scrollTop)
+            scrollElement.current?.removeEventListener(
+                'scroll',
+                throttleScroll
+            );
+            scrollElement.current && memorize(scrollElement.current.scrollTop);
             isMounted.current = false;
-        }
-    }, [])
-}
+        };
+    }, []);
+};
 
 export default useMemorizeScroll;

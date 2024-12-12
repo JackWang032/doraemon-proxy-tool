@@ -22,10 +22,7 @@
             "Options/*": ["./src/pages/Options/*"],
             "Popup/*": ["./src/pages/Popup/*"]
         },
-        "typeRoots": [
-            "./src/typings",
-            "./node_modules/@types"
-        ]
+        "typeRoots": ["./src/typings", "./node_modules/@types"]
     },
     "include": ["src/**/*"],
     "exclude": ["build", "node_modules"]

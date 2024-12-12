@@ -29,13 +29,13 @@
             100% {
                 transform: rotate(360deg);
             }
-        }  
+        }
     }
 
     .content {
         flex-grow: 1;
         overflow: hidden;
-        
+
         .scroll-wrapper {
             height: 100%;
             overflow-y: auto;
@@ -61,7 +61,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            >span {
+            > span {
                 flex: 1;
                 text-overflow: ellipsis;
                 overflow: hidden;
@@ -70,7 +70,7 @@
 
         .server-title-actions {
             flex-shrink: 0;
-            >span {
+            > span {
                 margin-right: 8px;
                 &:last-child {
                     margin-right: 0;

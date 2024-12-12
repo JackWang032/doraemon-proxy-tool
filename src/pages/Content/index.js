@@ -4,7 +4,7 @@ chrome.storage.local.get('config', function ({ config }) {
         !new RegExp(config?.matchUrls).test(location.hostname)
     )
         return false;
-    
+
     if (config?.devopsInjectEnabled) {
         console.log(
             'Doraemon Proxy Tool Works! ' + new Date().toLocaleString()

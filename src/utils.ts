@@ -1,4 +1,4 @@
-import { theme } from "antd";
+import { theme } from 'antd';
 
 export const getThemeAlgorithm = (themeConfig?: IConfig['theme']) => {
     switch (themeConfig) {
@@ -7,16 +7,24 @@ export const getThemeAlgorithm = (themeConfig?: IConfig['theme']) => {
         case 'light':
             return theme.defaultAlgorithm;
         case 'compact':
-            const sysThemeAlgorithm = window.matchMedia('(prefers-color-scheme: dark)').matches ? theme.darkAlgorithm : theme.defaultAlgorithm;
+            const sysThemeAlgorithm = window.matchMedia(
+                '(prefers-color-scheme: dark)'
+            ).matches
+                ? theme.darkAlgorithm
+                : theme.defaultAlgorithm;
             return [sysThemeAlgorithm, theme.compactAlgorithm];
-        case 'auto': 
-            return window.matchMedia('(prefers-color-scheme: dark)').matches ? theme.darkAlgorithm : theme.defaultAlgorithm;
+        case 'auto':
+            return window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? theme.darkAlgorithm
+                : theme.defaultAlgorithm;
         default:
             return theme.defaultAlgorithm;
     }
-}
+};
 
-export const getThemeType = (themeConfig?: IConfig['theme']): 'light' | 'dark' => {
+export const getThemeType = (
+    themeConfig?: IConfig['theme']
+): 'light' | 'dark' => {
     switch (themeConfig) {
         case 'dark':
             return 'dark';

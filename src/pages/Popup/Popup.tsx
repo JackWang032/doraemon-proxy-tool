@@ -1,9 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { StorageCacheContext } from './context';
-import {
-    SettingOutlined,
-    SyncOutlined,
-} from '@ant-design/icons';
+import { SettingOutlined, SyncOutlined } from '@ant-design/icons';
 import { Button, message, Modal, Segmented, Space, Tooltip } from 'antd';
 import { isEmpty } from 'lodash';
 import { POPUP_SIZE_TYPE, POPUP_TAB } from '@/const';

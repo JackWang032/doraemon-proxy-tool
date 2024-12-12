@@ -73,7 +73,9 @@ const KeepAlive: React.FC<KeepAliveProps> = ({ active, children }) => {
     }, [active]);
 
     return (
-        <KeepAliveContext.Provider value={{ registerActiveEffect, registerDeactiveEffect }}>
+        <KeepAliveContext.Provider
+            value={{ registerActiveEffect, registerDeactiveEffect }}
+        >
             <Suspense fallback={null}>
                 <Wrapper active={active}>{children}</Wrapper>
             </Suspense>

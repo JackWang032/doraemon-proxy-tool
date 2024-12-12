@@ -3,7 +3,7 @@ interface IProxyServer {
     serverName: string;
     serverAddress: string;
     rules: any[];
-};
+}
 
 interface IEnvInfo {
     id: number;

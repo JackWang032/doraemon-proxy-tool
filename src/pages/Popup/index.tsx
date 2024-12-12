@@ -27,8 +27,8 @@ const DARK_THEME_COMPONENTS_CONFIG: ThemeConfig['components'] = {
         colorBgContainer: '#171717d6',
     },
     Collapse: {
-        colorBgContainer: '#171717d6'
-    }
+        colorBgContainer: '#171717d6',
+    },
 };
 
 const COMMON_THEME_COMPONENTS_CONFIG: ThemeConfig['components'] = {

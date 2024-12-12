@@ -1,4 +1,11 @@
-import React, { useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, {
+    useContext,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import { Button, Collapse, Divider, message, Space, Tooltip } from 'antd';
 import { CopyOutlined, LinkOutlined } from '@ant-design/icons';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -60,8 +67,12 @@ const EnvList: React.FC<{}> = () => {
     } = useContext(StorageCacheContext);
 
     const [envList, setEnvList] = useState<IEnvInfo[]>(cachedEnvList || []);
-    const [selectedTags, setSelectedTags] = useState<number[]>(clientUserState.selectedTags);
-    const [activePanelKey, setActivePanelKey] = useState<string>(clientUserState.activePanelKey || '');
+    const [selectedTags, setSelectedTags] = useState<number[]>(
+        clientUserState.selectedTags
+    );
+    const [activePanelKey, setActivePanelKey] = useState<string>(
+        clientUserState.activePanelKey || ''
+    );
 
     const formatHost = (hostIpStr: string) => {
         return hostIpStr
@@ -106,10 +117,10 @@ const EnvList: React.FC<{}> = () => {
         memorize: (scrollTop) => {
             updateUserState({ envScrollTop: scrollTop });
         },
-    })
+    });
 
     return (
-        <div key='env-list' className='scroll-wrapper' ref={scrollContainer}>
+        <div key="env-list" className="scroll-wrapper" ref={scrollContainer}>
             <EnvFilter
                 value={selectedTags}
                 onChange={(value) => {

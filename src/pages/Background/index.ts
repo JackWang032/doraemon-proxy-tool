@@ -23,15 +23,21 @@ const getProxyServers = async () => {
 const mergeConfigs = (oldConfig, newConfig) => {
     for (let key in newConfig) {
         if (newConfig.hasOwnProperty(key)) {
-            if (!oldConfig.hasOwnProperty(key) || oldConfig[key] === undefined) {
+            if (
+                !oldConfig.hasOwnProperty(key) ||
+                oldConfig[key] === undefined
+            ) {
                 oldConfig[key] = newConfig[key];
-            } else if (typeof oldConfig[key] === 'object' && typeof newConfig[key] === 'object') {
+            } else if (
+                typeof oldConfig[key] === 'object' &&
+                typeof newConfig[key] === 'object'
+            ) {
                 mergeConfigs(oldConfig[key], newConfig[key]);
             }
         }
     }
     return oldConfig;
-}
+};
 
 const getDevopsUrl = async (urlStr?: string) => {
     if (!urlStr) return '';
@@ -123,8 +129,8 @@ export const initStorage: IStorageCache = {
         selectedTags: [],
         activePanelKey: undefined,
         envScrollTop: 0,
-        proxyScrollTop: 0
-    }
+        proxyScrollTop: 0,
+    },
 };
 
 // 插件安装时初始化

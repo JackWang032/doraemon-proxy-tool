@@ -123,7 +123,7 @@ const ProxyList: React.FC<IProps> = ({ ip }) => {
     });
 
     return (
-        <div key='p-list' className="scroll-wrapper" ref={scrollContainer}>
+        <div key="p-list" className="scroll-wrapper" ref={scrollContainer}>
             {proxyServers.map((proxyServer) => (
                 <Card
                     key={proxyServer.serverId}

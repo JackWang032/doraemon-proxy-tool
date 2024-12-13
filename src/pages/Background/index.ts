@@ -133,6 +133,20 @@ export const initStorage: IStorageCache = {
     },
 };
 
+// 每次浏览器启动时
+chrome.runtime.onStartup.addListener(async () => {
+    let ruleOpenCount = 0;
+    const { proxyServers } = await chrome.storage.local.get({
+        proxyServers: [],
+    });
+    proxyServers.forEach((server) => {
+        server.rules.forEach((rule) => {
+            if (rule.status === 1) ruleOpenCount++;
+        });
+    });
+    chrome.action.setBadgeText({ text: '' + ruleOpenCount });
+});
+
 // 插件安装时初始化
 chrome.runtime.onInstalled.addListener(async () => {
     const { config = {} } = await chrome.storage.local.get('config');

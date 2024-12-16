@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/JackWang032/doraemon-proxy-tool/compare/v1.4.1...v1.5.0) (2024-12-16)
+
+
+### Features
+
+* calculate open rule count on chrome start ([36cd156](https://github.com/JackWang032/doraemon-proxy-tool/commit/36cd156feaec270649406500d71aadda2a91b14d))
+* support env and improve ui ([2853545](https://github.com/JackWang032/doraemon-proxy-tool/commit/2853545ce2fd0401ceadc2e55455b97c40d791a3))
+
 ### [1.2.1](https://github.com/JackWang032/doraemon-proxy-tool/compare/v1.2.0...v1.2.1) (2024-06-17)
 
 ### Features

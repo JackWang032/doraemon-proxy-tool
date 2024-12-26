@@ -165,8 +165,8 @@ const Popup = () => {
                                 });
                             }}
                         />
-                        <Button type="link">
-                            <SettingOutlined onClick={openOptionPage} />
+                        <Button type="link" onClick={openOptionPage}>
+                            <SettingOutlined />
                         </Button>
                     </Space>
                 </div>

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/JackWang032/doraemon-proxy-tool/compare/v1.5.0...v1.6.0) (2024-12-26)
+
+
+### Features
+
+* support auto typing username and password ([fa4c65b](https://github.com/JackWang032/doraemon-proxy-tool/commit/fa4c65b91dfb2cbe9f80823a4e41d11b18480674))
+
 ## [1.5.0](https://github.com/JackWang032/doraemon-proxy-tool/compare/v1.4.1...v1.5.0) (2024-12-16)
 
 

@@ -22,11 +22,10 @@
     top: 20%;
 }
 
-.doraemon-login-btn {
+.doraemon-hack-btn {
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(calc(-50% + 605px), calc(-50% + 165px));
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -38,10 +37,27 @@
     overflow: hidden;
     transition-duration: 0.3s;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+}
+
+#doraemon-login-btn {
+    transform: translate(calc(-50% + 605px), calc(-50% + 165px));
     background-color: #1e78ff;
 }
 
-.doraemon-login-btn .sign {
+#doraemon-login-btn:active {
+    transform: translate(calc(-50% + 607px), calc(-50% + 167px));
+}
+
+#doraemon-typing-btn {
+    transform: translate(calc(-50% + 605px), calc(-50% + 110px));
+    background-color: #3bea61;
+}
+
+#doraemon-typing-btn:active {
+    transform: translate(calc(-50% + 607px), calc(-50% + 112px));
+}
+
+.doraemon-hack-btn .sign {
     width: 100%;
     transition-duration: 0.3s;
     display: flex;
@@ -49,15 +65,15 @@
     justify-content: center;
 }
 
-.doraemon-login-btn .sign svg {
+.doraemon-hack-btn .sign svg {
     width: 17px;
 }
 
-.doraemon-login-btn .sign svg path {
+.doraemon-hack-btn .sign svg path {
     fill: white;
 }
 
-.doraemon-login-btn .doraemon-text {
+.doraemon-hack-btn .doraemon-text {
     position: absolute;
     right: 0%;
     width: 0%;
@@ -69,25 +85,21 @@
     white-space: nowrap;
 }
 
-.doraemon-login-btn:hover {
+.doraemon-hack-btn:hover {
     width: 125px;
     border-radius: 40px;
     transition-duration: 0.3s;
 }
 
-.doraemon-login-btn:hover .sign {
+.doraemon-hack-btn:hover .sign {
     width: 30%;
     transition-duration: 0.3s;
     padding-left: 20px;
 }
 
-.doraemon-login-btn:hover .doraemon-text {
+.doraemon-hack-btn:hover .doraemon-text {
     opacity: 1;
     transition-duration: 0.3s;
     width: 65%;
     padding-right: 10px;
-}
-
-.doraemon-login-btn:active {
-    transform: translate(calc(-50% + 607px), calc(-50% + 167px));
 }

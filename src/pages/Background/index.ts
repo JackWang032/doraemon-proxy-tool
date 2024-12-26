@@ -20,6 +20,16 @@ const getProxyServers = async () => {
     }
 };
 
+const getAllEnvList = async () => {
+    const res = await api.getEnvList();
+    if (res.success) {
+        const envList = res.data || [];
+        await chrome.storage.local.set({
+            allEnvList: envList,
+        });
+    }
+};
+
 const mergeConfigs = (oldConfig, newConfig) => {
     for (let key in newConfig) {
         if (newConfig.hasOwnProperty(key)) {
@@ -106,6 +116,7 @@ export const initStorage: IStorageCache = {
     // 接口缓存
     proxyServers: [],
     envList: [],
+    allEnvList: [],
     ip: '',
     // 配置缓存
     config: {
@@ -145,6 +156,7 @@ chrome.runtime.onStartup.addListener(async () => {
         });
     });
     chrome.action.setBadgeText({ text: '' + ruleOpenCount });
+    getAllEnvList();
 });
 
 // 插件安装时初始化
@@ -156,6 +168,7 @@ chrome.runtime.onInstalled.addListener(async () => {
         config: mergedConfig,
     });
     registerContectMenus();
+    getAllEnvList();
     await getLocalIp();
     await getProxyServers();
 });

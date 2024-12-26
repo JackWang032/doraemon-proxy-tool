@@ -19,8 +19,8 @@ import './Options.scss';
 
 interface IProps {}
 const formItemLayout = {
-    labelCol: { span: 4 },
-    wrapperCol: { span: 20 },
+    labelCol: { span: 5 },
+    wrapperCol: { span: 19 },
 };
 
 const Options: React.FC<IProps> = () => {
@@ -234,15 +234,15 @@ const Options: React.FC<IProps> = () => {
                             <Form.Item
                                 name="matchUrls"
                                 label="注入匹配地址"
-                                tooltip="只对指定地址生效，支持正则表达式"
+                                tooltip="只对指定地址生效, 支持正则表达式, 并且同步生效环境管理中添加的访问URL"
                                 initialValue={config.matchUrls}
                             >
                                 <Input placeholder="请输入需要注入的数栈地址" />
                             </Form.Item>
                             <Form.Item
                                 name="devopsInjectEnabled"
-                                label="devops注入"
-                                tooltip="开启后会重写devops开发环境的config配置，接管跳转地址至线上环境"
+                                label="devops注入(前端专用)"
+                                tooltip="开启后会重写本地开发环境（域名dev.或local.开头）的config文件，接管跳转地址至线上环境"
                                 initialValue={config.devopsInjectEnabled}
                                 valuePropName="checked"
                             >
@@ -251,7 +251,7 @@ const Options: React.FC<IProps> = () => {
                             <Form.Item
                                 name={['quickLogin', 'enabled']}
                                 label="快速登录"
-                                tooltip="请保证环境中的验证码校验已关闭"
+                                tooltip="优先会取环境配置中的账号密码，请保证环境中的验证码校验已关闭"
                                 initialValue={config.quickLogin?.enabled}
                                 valuePropName="checked"
                             >

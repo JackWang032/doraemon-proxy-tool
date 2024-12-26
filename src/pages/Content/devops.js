@@ -8,8 +8,7 @@
     // 是否是devops开发环境
     function getIsDev(url) {
         return (
-            DEV_PREFIXS.some((prefix) => url.hostname.startsWith(prefix)) ||
-            (url.port !== '80' && url.port !== '')
+            DEV_PREFIXS.some((prefix) => url.hostname.startsWith(prefix))
         );
     }
 

@@ -37,7 +37,7 @@ export default {
     },
 
     // 获取环境列表
-    getEnvList: (params) => {
+    getEnvList: (params?) => {
         const urlParams = new URLSearchParams(params);
         return request<IEnvInfo[]>(
             `/api/env-management/env-list?${urlParams}`,

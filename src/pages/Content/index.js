@@ -1,13 +1,18 @@
-chrome.storage.local.get('config', function ({ config }) {
+chrome.storage.local.get({ config: {}, allEnvList: [] }, function ({ config, allEnvList }) {
     if (
-        !config?.matchUrls ||
-        !new RegExp(config?.matchUrls).test(location.hostname)
+        (!config?.matchUrls ||
+            !new RegExp(config?.matchUrls).test(location.hostname)) &&
+        !allEnvList?.some((env) => {
+            if (!env.url) return false;
+            const url = new URL(env.url);
+            return url.hostname === location.hostname;
+        })
     )
         return false;
 
     if (config?.devopsInjectEnabled) {
         console.log(
-            'Doraemon Proxy Tool Works! ' + new Date().toLocaleString()
+            'Doraemon插件Works! ' + new Date().toLocaleString()
         );
         var hackElement = document.createElement('script');
         hackElement.src = chrome.runtime.getURL('devops.js');
@@ -40,7 +45,23 @@ chrome.storage.local.get('config', function ({ config }) {
 
         var loginScript = document.createElement('script');
         loginScript.src = chrome.runtime.getURL('devops-login.js');
-        loginScript.dataset.quickLogin = JSON.stringify(config.quickLogin);
+
+        const loginConfig = {
+            ...config.quickLogin,
+        }
+
+        const envInfo = allEnvList.find(env => {
+            const url = new URL (env.url);
+            return url.hostname === location.hostname;
+        });
+
+        // 优先取env配置
+        if (envInfo && envInfo.uicUsername) {
+            loginConfig.username = envInfo.uicUsername;
+            loginConfig.password= envInfo.uicPasswd;
+        }
+
+        loginScript.dataset.quickLogin = JSON.stringify(loginConfig);
         loginScript.defer = true;
 
         // 只有Background中才能访问openOptionPage API

@@ -47,6 +47,7 @@ interface IStorageCache {
     proxyServers: IProxyServer[];
     config: IConfig;
     envList: IEnvInfo[];
+    allEnvList: IEnvInfo[];
     ip: string;
     /** Should only used to inititalize state */
     clientUserState: {
